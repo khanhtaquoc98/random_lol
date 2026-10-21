@@ -70,14 +70,39 @@ export const ROLES: RoleInfo[] = [
   },
 ];
 
-export const DDRAGON_VERSION = "14.24.1";
+export const DDRAGON_VERSION = "16.21.1";
+
+const DDRAGON_ID_FIXES: Record<string, string> = {
+  KaiSa: "Kaisa",
+  kaisa: "Kaisa",
+  ChoGath: "Chogath",
+  chogath: "Chogath",
+  KhaZix: "Khazix",
+  khazix: "Khazix",
+  VelKoz: "Velkoz",
+  velkoz: "Velkoz",
+  LeBlanc: "Leblanc",
+  leblanc: "Leblanc",
+  BelVeth: "Belveth",
+  belveth: "Belveth",
+  FiddleSticks: "Fiddlesticks",
+  fiddlesticks: "Fiddlesticks",
+  Wukong: "MonkeyKing",
+};
+
+export function normalizeDDragonId(id: string): string {
+  const cleaned = (id || "Aatrox").trim();
+  return DDRAGON_ID_FIXES[cleaned] || cleaned;
+}
 
 export function getChampionSquareUrl(id: string): string {
-  return `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${id}.png`;
+  const safeId = normalizeDDragonId(id);
+  return `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${safeId}.png`;
 }
 
 export function getChampionLoadingUrl(id: string): string {
-  return `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${id}_0.jpg`;
+  const safeId = normalizeDDragonId(id);
+  return `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${safeId}_0.jpg`;
 }
 
 export const CHAMPIONS: Champion[] = [

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  SUPABASE_SETTING_KEY,
   getStoredRiotKeyConfig,
   maskRiotKey,
   setStoredRiotKeyConfig,
@@ -9,8 +10,17 @@ import {
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const checkLive = searchParams.get("verify") === "1";
+  const adminSecretInput = req.headers.get("x-admin-secret")?.trim() || "";
+  const requiredAdminSecret = process.env.ADMIN_SECRET?.trim() || "";
 
-  const config = getStoredRiotKeyConfig();
+  if (requiredAdminSecret && adminSecretInput !== requiredAdminSecret) {
+    return NextResponse.json(
+      { error: "Unauthorized: Sai hoặc thiếu mã ADMIN_SECRET." },
+      { status: 401 }
+    );
+  }
+
+  const config = await getStoredRiotKeyConfig();
   const remainingMs = Math.max(0, config.expiresAt - Date.now());
 
   let verification = null;
@@ -24,6 +34,8 @@ export async function GET(req: NextRequest) {
     updatedAt: config.updatedAt,
     expiresAt: config.expiresAt,
     remainingHours: Number((remainingMs / (1000 * 60 * 60)).toFixed(1)),
+    storageSource: config.storageSource || "SUPABASE",
+    settingKey: SUPABASE_SETTING_KEY,
     verification,
   });
 }
@@ -38,7 +50,8 @@ export async function POST(req: NextRequest) {
     if (requiredAdminSecret && adminSecretInput !== requiredAdminSecret) {
       return NextResponse.json(
         {
-          error: "Sai mật khẩu quản trị (ADMIN_SECRET). Không được phép đổi Key.",
+          error:
+            "Sai mật khẩu quản trị (ADMIN_SECRET). Không được phép đổi Key.",
         },
         { status: 403 }
       );
@@ -54,9 +67,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify with Riot API first
-    const check = await verifyRiotApiKey(newKey);
-    const saved = setStoredRiotKeyConfig(newKey);
+    // Verify with Riot API first & save into Supabase app_settings
+    const [check, saved] = await Promise.all([
+      verifyRiotApiKey(newKey),
+      setStoredRiotKeyConfig(newKey),
+    ]);
 
     return NextResponse.json({
       status: "success",
@@ -64,6 +79,8 @@ export async function POST(req: NextRequest) {
       updatedAt: saved.updatedAt,
       expiresAt: saved.expiresAt,
       remainingHours: 24.0,
+      storageSource: saved.storageSource || "SUPABASE",
+      settingKey: SUPABASE_SETTING_KEY,
       verification: check,
     });
   } catch (err) {

@@ -3,12 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --hextech-gold: #c8aa6e;
-  --hextech-gold-light: #f0e6d2;
-  --hextech-gold-dark: #785a28;
-  --hextech-blue: #0ac8b9;
-  --hextech-dark: #010a13;
-  --hextech-panel: #091428;
+  color-scheme: light dark;
+  --brand-accent-light: #0d9488;
+  --brand-accent-dark: #14b8a6;
+  --accent-color: var(--brand-accent-light);
+
+  @media (prefers-color-scheme: dark) {
+    --accent-color: var(--brand-accent-dark);
+  }
+
+  @supports (color: light-dark(white, black)) {
+    --accent-color: light-dark(var(--brand-accent-light), var(--brand-accent-dark));
+  }
+
+  accent-color: var(--accent-color);
+  --hextech-gold: #b45309;
+  --hextech-gold-light: #fef3c7;
+  --hextech-gold-dark: #78350f;
+  --hextech-blue: #0d9488;
+  --hextech-bg: #f8fafc;
+  --hextech-panel: #ffffff;
   --spring-easing: linear(
     0,
     0.016 0.5%,
@@ -56,14 +70,42 @@
   );
 }
 
+html.light {
+  color-scheme: light;
+}
+
 body {
-  background-color: #010a13;
-  color: #f0e6d2;
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(10, 200, 185, 0.14) 0%, transparent 55%),
-    radial-gradient(circle at 85% 20%, rgba(200, 170, 110, 0.12) 0%, transparent 45%),
-    linear-gradient(180deg, #010a13 0%, #051122 50%, #010a13 100%);
-  min-height: 100vh;
+  background-color: #f8fafc;
+  color: #0f172a;
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(13, 148, 136, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 85% 15%, rgba(217, 119, 6, 0.08) 0%, transparent 45%),
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 55%, #f8fafc 100%);
+  min-block-size: 100dvh;
+  overflow-x: clip;
+}
+
+/* Fluid header container scaling */
+.fluid-header-container {
+  container-type: inline-size;
+  container-name: page-header;
+}
+
+.fluid-hero-title {
+  font-size: clamp(1.35rem, 3.6vw, 2.35rem);
+}
+
+@supports (font-size: 1cqi) {
+  .fluid-hero-title {
+    font-size: clamp(1.35rem, 3.6cqi, 2.35rem);
+  }
+}
+
+/* Scrollable lists stability */
+.scrollable-panel {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
 }
 
 /* Improve text layout & legibility on targeted elements */
@@ -93,8 +135,8 @@ p,
 }
 
 .champ-card:hover {
-  translate: 0px -6px;
-  scale: 1.015;
+  translate: 0px -4px;
+  scale: 1.01;
 }
 
 .hextech-action-btn {
@@ -109,7 +151,7 @@ p,
 
 .hextech-action-btn:hover:not(:disabled) {
   translate: 0px -2px;
-  scale: 1.03;
+  scale: 1.02;
 }
 
 .hextech-action-btn:active:not(:disabled) {
@@ -126,10 +168,10 @@ p,
 
 @supports not (translate: 0px) {
   .champ-card:hover {
-    transform: translate(0px, -6px) scale(1.015);
+    transform: translate(0px, -4px) scale(1.01);
   }
   .hextech-action-btn:hover:not(:disabled) {
-    transform: translate(0px, -2px) scale(1.03);
+    transform: translate(0px, -2px) scale(1.02);
   }
 }
 

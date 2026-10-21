@@ -49,7 +49,6 @@ function pickRandomChampion(
   currentChampId?: string
 ): Champion {
   const pool = getCandidatePool(role, mode);
-  // Prefer champions not in excludedIds and different from the current champion in this slot
   let available = pool.filter(
     (c) => !excludedIds.has(c.id) && c.id !== currentChampId
   );
@@ -113,7 +112,6 @@ export function LolRandomizerApp() {
         clearTimeout(timerRef.current);
       }
 
-      // Mark target lanes as rolling
       setRollingRoles((prev) => {
         const next = { ...prev };
         for (const r of rolesToRoll) {
@@ -122,7 +120,6 @@ export function LolRandomizerApp() {
         return next;
       });
 
-      // Keep track of already occupied champions in lanes that are NOT rolling
       const performSelection = (): LineupState => {
         const usedIds = new Set<string>();
         const nextLineup: LineupState = { ...currentLineup };
@@ -147,7 +144,6 @@ export function LolRandomizerApp() {
         return nextLineup;
       };
 
-      // Quick slot-machine shuffle preview
       const previewLineup = performSelection();
       setLineup(previewLineup);
 
@@ -184,7 +180,6 @@ export function LolRandomizerApp() {
     []
   );
 
-  // Initial roll on first client mount
   useEffect(() => {
     performRoll(
       INITIAL_ROLES,
@@ -200,7 +195,6 @@ export function LolRandomizerApp() {
   const handleRollAll = () => {
     const unlockedRoles = INITIAL_ROLES.filter((r) => !lockedRoles[r]);
     if (unlockedRoles.length === 0) {
-      // If all are locked, still roll all or alert? Let's unlock and roll all if none unlocked
       performRoll(INITIAL_ROLES, "Roll Tất Cả 5 Đường", lineup, poolMode);
       return;
     }
@@ -252,7 +246,6 @@ export function LolRandomizerApp() {
   const lockedCount = INITIAL_ROLES.filter((r) => lockedRoles[r]).length;
   const isAnyRolling = INITIAL_ROLES.some((r) => rollingRoles[r]);
 
-  // Calculate team composition stats
   const activeChamps = INITIAL_ROLES.map((r) => lineup[r]).filter(
     Boolean
   ) as Champion[];
@@ -262,53 +255,53 @@ export function LolRandomizerApp() {
   const mixedCount = activeChamps.filter((c) => c.damageType === "MIXED").length;
 
   return (
-    <div className="min-h-screen flex flex-col justify-between px-4 py-6 sm:px-6 lg:px-10 max-w-[1440px] mx-auto">
+    <div className="min-h-[calc(100dvh-4rem)] flex flex-col justify-between px-3 py-4 sm:px-6 sm:py-6 lg:px-10 max-w-[1440px] mx-auto">
       {/* Header Section */}
-      <header className="mb-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-5 border-b border-[#C8AA6E]/30">
+      <header className="mb-5 sm:mb-6 fluid-header-container">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-4 sm:pb-5 border-b border-slate-200">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C8AA6E]/15 border border-[#C8AA6E]/40 text-[#C8AA6E] text-xs font-bold uppercase tracking-widest mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-[#0AC8B9]" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-amber-800 text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-teal-600" />
               <span>League of Legends • Hextech Randomizer</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-[#F0E6D2] uppercase">
+            <h1 className="fluid-hero-title font-black tracking-tight text-slate-900 uppercase">
               Random Tướng 5 Đường{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C8AA6E] via-[#F0E6D2] to-[#0AC8B9]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-teal-600 to-sky-600">
                 TOP / JG / MID / AD / SP
               </span>
             </h1>
-            <p className="text-sm text-[#C8AA6E]/85 mt-1 max-w-2xl">
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
               Mỗi lần quay ngẫu nhiên đủ 5 vị trí không trùng lặp. Bạn có thể bấm{" "}
-              <strong className="text-[#0AC8B9]">Roll lại từng đường riêng biệt</strong>{" "}
+              <strong className="text-teal-700">Roll lại từng đường riêng biệt</strong>{" "}
               ngay trên thẻ đường đó hoặc tích chọn nhiều đường để roll lại cùng lúc.
             </p>
           </div>
 
           {/* Mode Selector & Quick Stats */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="inline-flex rounded-lg p-1 bg-[#091428] border border-[#C8AA6E]/40">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <div className="inline-flex rounded-lg p-1 bg-slate-100 border border-slate-200 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => setPoolMode("ROLE_SPECIFIC")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   poolMode === "ROLE_SPECIFIC"
-                    ? "bg-gradient-to-r from-[#C8AA6E] to-[#9E7E43] text-[#010A13] shadow"
-                    : "text-[#C8AA6E] hover:text-[#F0E6D2]"
+                    ? "bg-amber-500 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <Shield className="w-3.5 h-3.5" />
+                <Shield className="w-3.5 h-3.5 shrink-0" />
                 <span>Đúng Đường (Meta)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setPoolMode("ALL_CHAMPIONS")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   poolMode === "ALL_CHAMPIONS"
-                    ? "bg-gradient-to-r from-[#0AC8B9] to-[#005A82] text-[#010A13] shadow"
-                    : "text-[#C8AA6E] hover:text-[#F0E6D2]"
+                    ? "bg-teal-600 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <Swords className="w-3.5 h-3.5" />
+                <Swords className="w-3.5 h-3.5 shrink-0" />
                 <span>Mọi Tướng (All Pool)</span>
               </button>
             </div>
@@ -316,16 +309,16 @@ export function LolRandomizerApp() {
             <button
               type="button"
               onClick={handleCopyTeam}
-              className="hextech-action-btn inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-[#091428] text-[#F0E6D2] border border-[#C8AA6E]/50 hover:border-[#0AC8B9] cursor-pointer"
+              className="hextech-action-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-white text-slate-700 border border-slate-300 hover:border-teal-500 hover:text-teal-700 shadow-2xs cursor-pointer"
             >
               {copied ? (
                 <>
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  <span className="text-emerald-300">Đã Sao Chép!</span>
+                  <Check className="w-4 h-4 text-emerald-600" />
+                  <span className="text-emerald-700">Đã Sao Chép!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 text-[#C8AA6E]" />
+                  <Copy className="w-4 h-4 text-amber-600" />
                   <span>Copy Đội Hình</span>
                 </>
               )}
@@ -334,14 +327,14 @@ export function LolRandomizerApp() {
         </div>
 
         {/* Control Bar: Main Roll All + Roll Selected + Quick Single-Lane Reroll Bar */}
-        <div className="mt-5 p-4 rounded-xl bg-[#091428]/90 border border-[#C8AA6E]/35 shadow-xl flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4">
+        <div className="mt-4 sm:mt-5 p-3 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3.5 sm:gap-4">
           {/* Primary Roll Buttons */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3">
             <button
               type="button"
               onClick={handleRollAll}
               disabled={isAnyRolling}
-              className="hextech-action-btn flex-1 sm:flex-initial inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg font-black text-sm sm:text-base uppercase tracking-wider text-[#010A13] bg-gradient-to-r from-[#C8AA6E] via-[#F0E6D2] to-[#C8AA6E] hover:from-[#F0E6D2] hover:to-[#C8AA6E] shadow-[0_0_25px_rgba(200,170,110,0.4)] border border-[#F0E6D2] cursor-pointer disabled:opacity-60"
+              className="hextech-action-btn inline-flex items-center justify-center gap-2.5 px-5 sm:px-6 py-3 sm:py-3.5 rounded-lg font-black text-xs sm:text-base uppercase tracking-wider text-white bg-gradient-to-r from-amber-500 via-amber-600 to-amber-500 hover:from-amber-600 hover:to-amber-700 shadow-md cursor-pointer disabled:opacity-60"
             >
               <Dices
                 className={`w-5 h-5 ${isAnyRolling ? "animate-spin" : ""}`}
@@ -357,13 +350,13 @@ export function LolRandomizerApp() {
               type="button"
               onClick={handleRerollSelectedLanes}
               disabled={selectedCount === 0 || isAnyRolling}
-              className={`hextech-action-btn inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-extrabold text-xs sm:text-sm uppercase tracking-wider border transition-all cursor-pointer ${
+              className={`hextech-action-btn inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-3 sm:py-3.5 rounded-lg font-extrabold text-xs sm:text-sm uppercase tracking-wider border transition-all cursor-pointer ${
                 selectedCount > 0
-                  ? "bg-gradient-to-r from-[#0AC8B9] to-[#05968A] text-[#010A13] border-[#A5F3FC] shadow-[0_0_20px_rgba(10,200,185,0.4)]"
-                  : "bg-[#010A13]/60 text-[#C8AA6E]/45 border-[#C8AA6E]/20 cursor-not-allowed"
+                  ? "bg-teal-600 text-white border-teal-600 shadow-md"
+                  : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
               }`}
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4 shrink-0" />
               <span>Roll Lại Đường Đã Chọn ({selectedCount}/5)</span>
             </button>
 
@@ -386,7 +379,7 @@ export function LolRandomizerApp() {
                     SP: false,
                   });
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-[#C8AA6E] hover:text-[#F0E6D2] bg-[#010A13]/60 border border-[#C8AA6E]/30 cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 border border-slate-200 cursor-pointer"
               >
                 <Unlock className="w-3.5 h-3.5" />
                 <span>Đặt lại Chọn/Khóa</span>
@@ -395,24 +388,26 @@ export function LolRandomizerApp() {
           </div>
 
           {/* Quick Single-Lane Reroll Pills */}
-          <div className="flex flex-wrap items-center gap-2 pt-3 xl:pt-0 border-t xl:border-t-0 border-[#C8AA6E]/20">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#C8AA6E] mr-1">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 pt-3 xl:pt-0 border-t xl:border-t-0 border-slate-200">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 mr-1">
               Roll nhanh 1 đường:
             </span>
-            {ROLES.map((role) => (
-              <button
-                key={role.id}
-                type="button"
-                onClick={() => handleRerollSingleLane(role.id)}
-                disabled={rollingRoles[role.id]}
-                className="hextech-action-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-[#010A13] hover:bg-[#0AC8B9]/15 text-[#F0E6D2] border border-[#C8AA6E]/40 hover:border-[#0AC8B9] cursor-pointer"
-              >
-                <span style={{ color: role.accentColor }}>
-                  <RoleIcon role={role.id} className="w-3.5 h-3.5" />
-                </span>
-                <span>{role.shortName}</span>
-              </button>
-            ))}
+            <div className="grid grid-cols-5 sm:flex sm:flex-wrap gap-1.5 sm:gap-2">
+              {ROLES.map((role) => (
+                <button
+                  key={role.id}
+                  type="button"
+                  onClick={() => handleRerollSingleLane(role.id)}
+                  disabled={rollingRoles[role.id]}
+                  className="hextech-action-btn inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-slate-50 hover:bg-teal-50 text-slate-800 hover:text-teal-700 border border-slate-200 hover:border-teal-400 cursor-pointer"
+                >
+                  <span style={{ color: role.accentColor }}>
+                    <RoleIcon role={role.id} className="w-3.5 h-3.5" />
+                  </span>
+                  <span>{role.shortName}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </header>
@@ -421,7 +416,7 @@ export function LolRandomizerApp() {
       <main className="flex-1">
         <section
           aria-label="Đội hình 5 đường Liên Minh Huyền Thoại"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4"
         >
           {ROLES.map((role, index) => {
             const poolCount = getCandidatePool(role.id, poolMode).length;
@@ -444,43 +439,58 @@ export function LolRandomizerApp() {
         </section>
 
         {/* Team Composition Summary & Roll History */}
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="mt-5 sm:mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
           {/* Team Composition Analysis */}
-          <section className="p-4 rounded-xl bg-[#091428]/85 border border-[#C8AA6E]/30 flex flex-col justify-between">
+          <section className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-extrabold uppercase tracking-wider text-[#C8AA6E] flex items-center gap-2">
-                  <Swords className="w-4 h-4 text-[#0AC8B9]" />
+                <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                  <Swords className="w-4 h-4 text-teal-600" />
                   <span>Phân Tích Đội Hình Hiện Tại</span>
                 </h2>
-                <span className="text-xs text-[#C8AA6E]/75">
-                  Lượt roll: <strong className="text-[#F0E6D2]">{totalRolls}</strong>
+                <span className="text-xs text-slate-500">
+                  Lượt roll:{" "}
+                  <strong className="text-slate-900">{totalRolls}</strong>
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5 text-xs mb-3">
-                <div className="p-2.5 rounded-lg bg-[#010A13]/70 border border-orange-500/30 flex items-center justify-between">
-                  <span className="text-orange-300 font-semibold">Vật Lý (AD)</span>
-                  <span className="text-base font-black text-[#F0E6D2]">{adCount}</span>
+                <div className="p-2.5 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-between">
+                  <span className="text-orange-800 font-semibold">
+                    Vật Lý (AD)
+                  </span>
+                  <span className="text-base font-black text-orange-950">
+                    {adCount}
+                  </span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-[#010A13]/70 border border-sky-500/30 flex items-center justify-between">
-                  <span className="text-sky-300 font-semibold">Phép Thuật (AP)</span>
-                  <span className="text-base font-black text-[#F0E6D2]">{apCount}</span>
+                <div className="p-2.5 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-between">
+                  <span className="text-sky-800 font-semibold">
+                    Phép Thuật (AP)
+                  </span>
+                  <span className="text-base font-black text-sky-950">
+                    {apCount}
+                  </span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-[#010A13]/70 border border-emerald-500/30 flex items-center justify-between">
-                  <span className="text-emerald-300 font-semibold">Đỡ Đòn (Tank)</span>
-                  <span className="text-base font-black text-[#F0E6D2]">{tankCount}</span>
+                <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+                  <span className="text-emerald-800 font-semibold">
+                    Đỡ Đòn (Tank)
+                  </span>
+                  <span className="text-base font-black text-emerald-950">
+                    {tankCount}
+                  </span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-[#010A13]/70 border border-purple-500/30 flex items-center justify-between">
-                  <span className="text-purple-300 font-semibold">Hỗn Hợp</span>
-                  <span className="text-base font-black text-[#F0E6D2]">{mixedCount}</span>
+                <div className="p-2.5 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-between">
+                  <span className="text-purple-800 font-semibold">Hỗn Hợp</span>
+                  <span className="text-base font-black text-purple-950">
+                    {mixedCount}
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-[#010A13]/60 border border-[#C8AA6E]/20 text-xs text-[#C8AA6E]/90">
-              <div className="flex items-center gap-1.5 font-bold text-[#F0E6D2] mb-1">
-                <CheckSquare className="w-3.5 h-3.5 text-[#0AC8B9]" />
+            <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600">
+              <div className="flex items-center gap-1.5 font-bold text-slate-900 mb-1">
+                <CheckSquare className="w-3.5 h-3.5 text-teal-600" />
                 <span>Mẹo sử dụng nhanh:</span>
               </div>
               <p>
@@ -492,17 +502,17 @@ export function LolRandomizerApp() {
           </section>
 
           {/* Roll History List */}
-          <section className="lg:col-span-2 p-4 rounded-xl bg-[#091428]/85 border border-[#C8AA6E]/30">
+          <section className="lg:col-span-2 p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-extrabold uppercase tracking-wider text-[#C8AA6E] flex items-center gap-2">
-                <History className="w-4 h-4 text-[#0AC8B9]" />
+              <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                <History className="w-4 h-4 text-teal-600" />
                 <span>Lịch Sử Roll Gần Đây (Bấm để khôi phục)</span>
               </h2>
               {history.length > 0 && (
                 <button
                   type="button"
                   onClick={() => setHistory([])}
-                  className="text-xs text-[#C8AA6E]/70 hover:text-[#F0E6D2] underline cursor-pointer"
+                  className="text-xs text-slate-500 hover:text-slate-900 underline cursor-pointer"
                 >
                   Xóa lịch sử
                 </button>
@@ -510,38 +520,35 @@ export function LolRandomizerApp() {
             </div>
 
             {history.length === 0 ? (
-              <p className="text-xs text-[#C8AA6E]/60 py-6 text-center">
+              <p className="text-xs text-slate-400 py-6 text-center">
                 Chưa có lịch sử roll nào.
               </p>
             ) : (
-              <div className="space-y-2 max-h-[190px] overflow-y-auto pr-1">
+              <div className="scrollable-panel space-y-2 max-h-[210px] pr-1">
                 {history.map((item) => (
                   <div
                     key={item.id}
                     onClick={() => setLineup(item.lineup)}
-                    className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 p-2 rounded-lg bg-[#010A13]/75 hover:bg-[#0AC8B9]/10 border border-[#C8AA6E]/20 hover:border-[#0AC8B9]/50 transition-colors cursor-pointer"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg bg-slate-50 hover:bg-teal-50/70 border border-slate-200 hover:border-teal-400 transition-colors cursor-pointer"
                   >
-                    <div className="flex items-center gap-2 min-w-[160px]">
-                      <span className="text-[11px] font-mono text-[#C8AA6E]/75">
+                    <div className="flex items-center gap-2 min-w-[150px]">
+                      <span className="text-[11px] font-mono text-slate-500">
                         {item.timestamp}
                       </span>
-                      <span className="text-xs font-bold text-[#0AC8B9] truncate">
+                      <span className="text-xs font-bold text-teal-700 truncate">
                         {item.actionLabel}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       {ROLES.map((r) => {
                         const ch = item.lineup[r.id];
                         return (
                           <div
                             key={r.id}
-                            className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-[#091428] border border-[#C8AA6E]/25 text-xs"
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white border border-slate-200 text-xs shadow-2xs"
                           >
-                            <span
-                              className="font-extrabold text-[10px]"
-                              style={{ color: r.accentColor }}
-                            >
+                            <span className="font-extrabold text-[10px] text-slate-700">
                               {r.shortName}:
                             </span>
                             {ch && (
@@ -554,7 +561,7 @@ export function LolRandomizerApp() {
                                 className="w-4 h-4 rounded-xs object-cover"
                               />
                             )}
-                            <span className="text-[#F0E6D2] font-medium">
+                            <span className="text-slate-900 font-medium">
                               {ch?.name ?? "-"}
                             </span>
                           </div>

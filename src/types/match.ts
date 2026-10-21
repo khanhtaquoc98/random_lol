@@ -23,6 +23,10 @@ export interface ParticipantStats {
   deaths: number;
   assists: number;
   kda: number;
+  largestKillingSpree?: number;
+  largestMultiKill?: number;
+  visionWardsBoughtInGame?: number;
+  damageDealtToTurrets?: number;
   totalDamageDealtToChampions: number;
   totalDamageTaken: number;
   goldEarned: number;
@@ -77,6 +81,23 @@ export interface LaneComparisonItem {
   verdict: string;
 }
 
+export interface PlayerReviewItem {
+  puuid?: string;
+  teamId?: 100 | 200;
+  playerName: string;
+  championId?: string;
+  champion: string;
+  role: RoleId;
+  win?: boolean;
+  kdaText?: string;
+  mvpScore?: number;
+  grade: string; // S+, S, A, B, C
+  summary?: string;
+  strengths: string[];
+  weaknesses: string[];
+  actionableAdvice: string[];
+}
+
 export interface AiMatchAnalysisResult {
   overview: string;
   winConditionSummary: string;
@@ -92,15 +113,8 @@ export interface AiMatchAnalysisResult {
     role: RoleId;
     reason: string;
   };
-  focusedPlayerReview: {
-    playerName: string;
-    champion: string;
-    role: RoleId;
-    grade: string; // S+, S, A, B, C
-    strengths: string[];
-    weaknesses: string[];
-    actionableAdvice: string[];
-  };
+  focusedPlayerReview: PlayerReviewItem;
+  allPlayerReviews?: PlayerReviewItem[];
   laneComparisons: LaneComparisonItem[];
   macroInsights: string[];
   rawAiResponse?: string;

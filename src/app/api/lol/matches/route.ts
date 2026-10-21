@@ -48,10 +48,10 @@ export async function GET(req: NextRequest) {
   const matchId = searchParams.get("matchId")?.trim() || "";
   const platform = (searchParams.get("platform")?.toUpperCase() ||
     "VN2") as RiotPlatformId;
-  const count = Math.min(5, Math.max(1, Number(searchParams.get("count") || 3)));
+  const count = Math.min(10, Math.max(1, Number(searchParams.get("count") || 8)));
 
-  // Allow Riot API Key from request header OR dynamic server key manager (.riot-key-cache.json / .env.local)
-  const storedConfig = getStoredRiotKeyConfig();
+  // Allow Riot API Key from request header OR Supabase app_settings ("riot_api_key")
+  const storedConfig = await getStoredRiotKeyConfig();
   const apiKey =
     req.headers.get("x-riot-api-key")?.trim() ||
     storedConfig.apiKey ||
@@ -163,10 +163,13 @@ export async function GET(req: NextRequest) {
     if (!accountRes.ok) {
       const errBody = await accountRes.text();
       const isKeyExpired = accountRes.status === 401 || accountRes.status === 403;
+      const isUnknownKey = errBody.includes("Unknown apikey");
       return NextResponse.json(
         {
-          error: isKeyExpired
-            ? `Riot Development API Key đã hết hạn (24h) hoặc không hợp lệ (HTTP ${accountRes.status}). Hãy bấm "Đổi Key Nhanh" để dán key mới!`
+          error: isUnknownKey
+            ? `Máy chủ Riot phản hồi "Unknown apikey" (HTTP 401): Key hiện tại chưa được kích hoạt hoặc đã bị đổi khi bấm Regenerate trên developer.riotgames.com. Hãy tích Captcha -> bấm "Regenerate API Key" rồi copy key mới dán vào mục Đổi Riot Key!`
+            : isKeyExpired
+            ? `Riot Development API Key đã hết hạn (HTTP ${accountRes.status}). Hãy bấm "Đổi Riot Key" để dán key mới!`
             : `Không tìm thấy tài khoản Riot ID "${gameName}#${tagLine}" (HTTP ${accountRes.status}).`,
           keyExpired: isKeyExpired,
           details: errBody,
