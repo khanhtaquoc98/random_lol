@@ -305,8 +305,8 @@ function buildAiPromptForAll10Players(match: NormalizedMatchData): string {
   }).join("\n\n");
 
   return `# VAI TRÒ CỦA BẠN
-Bạn là Huấn luyện viên trưởng (Head Coach) & Chuyên gia phân tích Liên Minh Huyền Thoại cấp độ Thách Đấu.
-Hãy phân tích chuyên sâu trận đấu dưới đây bằng tiếng Việt chuẩn thuật ngữ LMHT và trả về DUY NHẤT 1 đối tượng JSON hợp lệ.
+Bạn là Huấn luyện viên trưởng (Head Coach - HLV) chuyên nghiệp cấp độ LCK / Thách Đấu Liên Minh Huyền Thoại đang mổ băng (VOD Review) sau trận đấu.
+Hãy phân tích chuyên sâu ván đấu dưới đây bằng tiếng Việt chuẩn thuật ngữ LMHT chuyên nghiệp (prio đường, nhịp biến về, thế lính slow-push/freeze, kiểm soát bụi cỏ, chiêu thức Q/W/E/R, ngưỡng sức mạnh trang bị, điều kiện thắng giao tranh 5v5) và trả về DUY NHẤT 1 đối tượng JSON hợp lệ.
 
 # THÔNG TIN TRẬN ĐẤU
 - Mã trận: ${match.matchId} (${match.queueName}) | Thời lượng: ${durationMin} phút | Phiên bản: ${match.gameVersion}
@@ -316,30 +316,31 @@ Hãy phân tích chuyên sâu trận đấu dưới đây bằng tiếng Việt 
 # DỮ LIỆU CHI TIẾT 5 CẶP ĐỐI ĐẦU CÙNG ĐƯỜNG (10 NGƯỜI CHƠI)
 ${laneBlocks}
 
-# NGUYÊN TẮC PHÂN TÍCH BẮT BUỘC (CỰC KỲ QUAN TRỌNG)
-1. **KHÔNG DÙNG VĂN MẪU LẶP LẠI**: Mỗi người chơi trong 10 người phải có nhận xét riêng biệt dựa trên **bộ kỹ năng chất tướng** (ví dụ: Sett dùng Cuồng Thú Quyền W/Hủy Diệt Đấu Trường R, Cho'Gath tích cộng dồn Đại Tiệc R, Dr. Mundo càn lướt tuyến đầu, Sylas cướp chiêu cuối, Mel cấu rỉa/phản chiêu...), **ngọc bổ trợ** và **kèo đối đầu trực tiếp cùng đường**.
-2. **TRUNG THỰC TUYỆT ĐỐI VỚI SỐ LIỆU**:
-   - Nếu người chơi chết nhiều (deaths >= 6 hoặc KDA < 1.8) hoặc farm thấp (CS/phút < 5.8 với đường đơn/AD), **TUYỆT ĐỐI KHÔNG khen là "kiểm soát tài nguyên rất tốt" hay "gánh đội xuất sắc"**.
-   - Hãy phân tích đúng thực tế: Ví dụ người chơi có 3/8/6 nhưng gây 35,587 sát thương thì điểm mạnh là khả năng càn lướt gây sát thương bất chấp thua thiệt, còn điểm yếu là nằm xuống quá nhiều (8 lần) khiến mất nhịp đẩy đường và trao vàng cho đối thủ.
-   - So sánh trực tiếp 2 người chơi cùng đường với nhau (ai thắng đường, ai hơn vàng/lính/sát thương, ai kiểm soát tầm nhìn và tham gia giao tranh tốt hơn).
+# NGUYÊN TẮC MỔ BĂNG CỦA HLV TRƯỞNG (CỰC KỲ QUAN TRỌNG)
+1. **TUYỆT ĐỐI CẤM VĂN MẪU LẶP LẠI GIỮA 10 NGƯỜI CHƠI**:
+   - CẤM mở đầu câu bằng các cụm từ giống nhau như "Trong trận đấu này...", "Bạn kiểm soát tài nguyên rất tốt...", "Mặc dù là người chơi xuất sắc...".
+   - Mỗi người chơi trong 10 người PHẢI có giọng văn nhận xét hoàn toàn khác nhau, đi thẳng vào **chất tướng & bộ kỹ năng đặc trưng (Q/W/E/R)**, **ngọc bổ trợ** và **tương tác kèo đấu 1v1 / 2v2 trực tiếp với đối thủ cùng đường** (ví dụ: cách Sett dùng Cuồng Thú Quyền W trả sát thương trước Cho'Gath tích Đại Tiệc R; cách Lee Sin tận dụng Sóng Âm Q1-Q2 cướp mục tiêu trước Dr. Mundo; cách Sylas cướp chiêu cuối; cách Pyke rình rập dùng Tử Thần Đáy Sâu R so với Senna tích Sương Đen...).
+2. **ĐỌC SỐ LIỆU NHƯ MỘT HLV THỰC THỤ**:
+   - Đánh giá đúng bản chất từng vai trò: Đấu sĩ/Đỡ đòn nhìn vào sát thương gánh chịu + khả năng mở giao tranh/càn lướt tuyến đầu; Rừng nhìn vào KP%, kiểm soát Sâu Hư Không/Rồng/Baron và nhịp gank; Mid/AD nhìn vào DPM (sát thương/phút), CS/phút, chênh lệch vàng và giữ vị trí (số lần chết); SP nhìn vào điểm tầm nhìn, mắt tím đã mua, phá mắt và bảo kê/mở combat.
+   - Trung thực và thẳng thắn: Nếu người chơi nằm xuống nhiều (deaths >= 6) hoặc thua đường nặng về vàng/CS, hãy chỉ rõ nguyên nhân chiến thuật (bị bắt lẻ khi đẩy lẻ không tầm nhìn, trao đổi chiêu thức lỗi ở cấp độ đầu, hoặc thiếu góc đứng an toàn trong giao tranh) thay vì khen chung chung.
 3. **ĐẦY ĐỦ 10 NGƯỜI CHƠI TRONG "allPlayerReviews"**:
-   - Mảng "allPlayerReviews" BẮT BUỘC phải chứa đủ 10 phần tử tương ứng với 10 \`puuid\` ở trên.
+   - Mảng "allPlayerReviews" BẮT BUỘC phải chứa đủ 10 phần tử tương ứng chính xác với 10 \`puuid\` ở trên.
 
 # CẤU TRÚC JSON ĐẦU RA BẮT BUỘC
 {
-  "overview": "2-3 câu phân tích sâu cục diện trận đấu, bước ngoặt giao tranh và cách đội thắng áp đặt thế trận",
-  "winConditionSummary": "Phân tích rõ điều kiện thắng và nguyên nhân cốt lõi giúp đội thắng dứt điểm trận đấu",
+  "overview": "2-3 câu mổ băng sắc sảo về cục diện trận đấu, thế trận 3 đường, nhịp kiểm soát mục tiêu lớn và khoảnh khắc bước ngoặt định đoạt ván đấu",
+  "winConditionSummary": "Phân tích chuẩn xác điều kiện thắng (Win Condition) mà đội thắng đã vận hành thành công và sai lầm chí mạng khiến đội thua sụp đổ",
   "mvpPlayer": {
     "name": "Tên#Tag của MVP đội thắng",
     "champion": "Tên tướng MVP",
     "role": "TOP|JG|MID|AD|SP",
-    "reason": "Lý do thuyết phục kèm số liệu KDA, sát thương, KP và đóng góp chiến thuật"
+    "reason": "Phân tích thuyết phục chuẩn HLV về tầm ảnh hưởng, kỹ năng chất tướng và số liệu KDA, sát thương, KP giúp dẫn dắt toàn đội"
   },
   "svpPlayer": {
     "name": "Tên#Tag của SVP đội thua",
     "champion": "Tên tướng SVP",
     "role": "TOP|JG|MID|AD|SP",
-    "reason": "Lý do thuyết phục kèm số liệu nổi bật nhất bên đội thua"
+    "reason": "Phân tích nỗ lực gánh đội nổi bật nhất bên đội thua kèm số liệu thực tế"
   },
   "laneComparisons": [
     {
@@ -347,7 +348,7 @@ ${laneBlocks}
       "blueChampion": "Tên tướng TOP đội xanh",
       "redChampion": "Tên tướng TOP đội đỏ",
       "winnerTeam": 100,
-      "verdict": "Phân tích sâu kèo đối đầu TOP giữa 2 tướng kèm chênh lệch vàng, sát thương, KDA và ảnh hưởng lên ván đấu"
+      "verdict": "Mổ băng kèo đối đầu TOP: Phân tích tương tác kỹ năng giữa 2 tướng, ai thắng prio đường, chênh lệch vàng/sát thương/CS và hệ quả lên ván đấu"
     },
     { "role": "JG", "blueChampion": "...", "redChampion": "...", "winnerTeam": 200, "verdict": "..." },
     { "role": "MID", "blueChampion": "...", "redChampion": "...", "winnerTeam": 100, "verdict": "..." },
@@ -355,9 +356,9 @@ ${laneBlocks}
     { "role": "SP", "blueChampion": "...", "redChampion": "...", "winnerTeam": 200, "verdict": "..." }
   ],
   "macroInsights": [
-    "Nhận xét sâu về kiểm soát mục tiêu lớn (Rồng, Baron, Sâu Hư Không)",
-    "Nhận xét về chuyển hóa lợi thế đi đường thành trụ và kiểm soát rừng",
-    "Nhận xét về bài toán tầm nhìn (Mắt kiểm soát) và phối hợp giao tranh tổng 5v5"
+    "Góc nhìn HLV về kiểm soát mục tiêu lớn (Rồng, Baron, Sâu Hư Không) và thiết lập thế trận trước giờ mục tiêu ra mắt",
+    "Góc nhìn HLV về khả năng chuyển hóa lợi thế đi đường thành trụ ngoài, kiểm soát rừng đối phương và nhịp độ lăn cầu tuyết",
+    "Góc nhìn HLV về bài toán kiểm soát tầm nhìn (Mắt tím/Phá mắt) và cách vận hành đội hình trong giao tranh tổng 5v5"
   ],
   "allPlayerReviews": [
     {
@@ -366,18 +367,18 @@ ${laneBlocks}
       "champion": "Tên tướng",
       "role": "TOP|JG|MID|AD|SP",
       "grade": "S+|S|A|B|C",
-      "summary": "1-2 câu đánh giá tổng quan sắc sảo, đúng thực tế màn trình diễn của người chơi với vị tướng đó",
+      "summary": "Nhận xét tổng quan sắc bén, mang đậm chất HLV chuyên nghiệp, đi thẳng vào lối chơi của vị tướng này trong trận (KHÔNG dùng mẫu câu lặp lại với người chơi khác)",
       "strengths": [
-        "Điểm làm tốt 1 gắn với số liệu thực tế và chất tướng",
-        "Điểm làm tốt 2 trong kèo đấu hoặc giao tranh"
+        "Điểm sáng chuyên môn 1: Phân tích cách phát huy bộ kỹ năng tướng + số liệu nổi bật",
+        "Điểm sáng chuyên môn 2: Đóng góp trong kèo đi đường hoặc giao tranh tổng"
       ],
       "weaknesses": [
-        "Điểm yếu/sai lầm thực tế 1 (số lần chết, thua vàng/CS đối thủ cùng đường, thiếu mắt tím, KP thấp...)",
-        "Điểm cần khắc phục 2 trong cách vận hành tướng"
+        "Vấn đề chuyên môn 1 cần khắc phục (chết lẻ, thua CS/vàng trước đối thủ cùng đường, thiếu mắt kiểm soát, hoặc chọn vị trí lỗi...)",
+        "Vấn đề chuyên môn 2 trong cách xử lý tình huống hoặc phối hợp macro"
       ],
       "actionableAdvice": [
-        "Lời khuyên thực chiến 1 gắn trực tiếp với kỹ năng tướng và kèo đối đầu cùng đường",
-        "Lời khuyên thực chiến 2 về macro/tầm nhìn/chọn vị trí giao tranh"
+        "Bài tập/Lời khuyên thực chiến 1 từ HLV gắn trực tiếp với combo/kỹ năng của tướng và kèo đối đầu trực tiếp",
+        "Bài tập/Lời khuyên thực chiến 2 về quản lý thế lính, nhịp độ di chuyển (roam/teleport) hoặc chọn mục tiêu trong combat"
       ]
     }
   ]
@@ -503,46 +504,74 @@ async function callGroqDirectForAll10Players(
   match: NormalizedMatchData,
   prompt: string,
   apiKey: string,
-  model: string
-): Promise<Partial<AiMatchAnalysisResult> | null> {
+  preferredModel: string
+): Promise<{ parsed: Partial<AiMatchAnalysisResult>; modelUsed: string } | null> {
   if (!apiKey) return null;
 
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: apiKey.startsWith("Bearer ") ? apiKey : `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        {
-          role: "system",
-          content:
-            "Bạn là Huấn luyện viên trưởng (Head Coach) Liên Minh Huyền Thoại cấp độ Thách Đấu. Phân tích sâu sắc, trung thực, sát chất tướng và số liệu của cả 10 người chơi. Luôn trả về duy nhất một chuỗi JSON hợp lệ bằng tiếng Việt.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.45,
-      max_tokens: 6500,
-      response_format: { type: "json_object" },
-    }),
-    cache: "no-store",
-  });
+  const normalizedModel =
+    !preferredModel ||
+    preferredModel === "llama-3.3-70b-versatile" ||
+    preferredModel === "gpt-4o-mini" ||
+    preferredModel === "default"
+      ? "openai/gpt-oss-120b"
+      : preferredModel;
 
-  if (!res.ok) return null;
-  const data = await res.json();
-  const content = data?.choices?.[0]?.message?.content;
-  if (typeof content !== "string") return null;
+  const candidateModels = Array.from(
+    new Set([
+      normalizedModel,
+      "openai/gpt-oss-120b",
+      "qwen/qwen3.8-27b",
+      "openai/gpt-oss-20b",
+    ])
+  );
 
-  const cleaned = content
-    .replace(/^```json\s*/i, "")
-    .replace(/```$/i, "")
-    .trim();
-  return JSON.parse(cleaned) as Partial<AiMatchAnalysisResult>;
+  for (const model of candidateModels) {
+    try {
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: apiKey.startsWith("Bearer ")
+            ? apiKey
+            : `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            {
+              role: "system",
+              content:
+                "Bạn là Huấn luyện viên trưởng (Head Coach - HLV) chuyên nghiệp cấp độ LCK / Thách Đấu Liên Minh Huyền Thoại. Hãy mổ băng sâu sắc, trung thực, sát chất tướng (Q/W/E/R), kèo đấu cùng đường và số liệu của cả 10 người chơi. Tuyệt đối không dùng văn mẫu lặp lại giữa các người chơi. Luôn trả về duy nhất một chuỗi JSON hợp lệ bằng tiếng Việt.",
+            },
+            {
+              role: "user",
+              content: prompt,
+            },
+          ],
+          temperature: 0.55,
+          max_tokens: 8192,
+          response_format: { type: "json_object" },
+        }),
+        cache: "no-store",
+      });
+
+      if (!res.ok) continue;
+      const data = await res.json();
+      const content = data?.choices?.[0]?.message?.content;
+      if (typeof content !== "string" || !content.trim()) continue;
+
+      const cleaned = content
+        .replace(/^```json\s*/i, "")
+        .replace(/```$/i, "")
+        .trim();
+      const parsed = JSON.parse(cleaned) as Partial<AiMatchAnalysisResult>;
+      return { parsed, modelUsed: model };
+    } catch {
+      continue;
+    }
+  }
+
+  return null;
 }
 
 export async function POST(req: NextRequest) {
@@ -559,7 +588,7 @@ export async function POST(req: NextRequest) {
     const aiModel: string =
       body.customAiModel?.trim() ||
       process.env.AI_ANALYSIS_MODEL?.trim() ||
-      "llama-3.3-70b-versatile";
+      "openai/gpt-oss-120b";
 
     if (!match || !match.blueTeam || !match.redTeam) {
       return NextResponse.json(
@@ -580,19 +609,20 @@ export async function POST(req: NextRequest) {
     const fallbackBase = buildSmartAnalysisFromMatch(
       match,
       focusedParticipant,
-      `Groq AI Coach (${aiModel})`
+      `Groq AI Coach (Fallback)`
     );
 
     // Call Groq LLM directly so all 10 players get real, deep AI coaching reviews
     try {
-      const groqAnalysis = await callGroqDirectForAll10Players(
+      const groqResult = await callGroqDirectForAll10Players(
         match,
         prompt,
         aiApiKey,
         aiModel
       );
 
-      if (groqAnalysis) {
+      if (groqResult?.parsed) {
+        const groqAnalysis = groqResult.parsed;
         const aiReviewsList = Array.isArray(groqAnalysis.allPlayerReviews)
           ? groqAnalysis.allPlayerReviews
           : [];
@@ -663,7 +693,7 @@ export async function POST(req: NextRequest) {
               : fallbackBase.macroInsights,
           focusedPlayerReview: mergedFocused,
           allPlayerReviews: mergedAllReviews,
-          usedEndpoint: `Groq AI (${aiModel} - Phân tích sâu 10 người chơi)`,
+          usedEndpoint: `Groq AI HLV (${groqResult.modelUsed} - Phân tích sâu 10 người chơi)`,
         };
 
         return NextResponse.json({
