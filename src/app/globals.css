@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --hextech-gold: #c8aa6e;
+  --hextech-gold-light: #f0e6d2;
+  --hextech-gold-dark: #785a28;
+  --hextech-blue: #0ac8b9;
+  --hextech-dark: #010a13;
+  --hextech-panel: #091428;
+  --spring-easing: linear(
+    0,
+    0.016 0.5%,
+    0.06 1%,
+    0.226 2%,
+    1.116 5.4%,
+    1.375 6.6%,
+    1.527 7.7%,
+    1.565 8.2%,
+    1.585 8.8%,
+    1.581 9.3%,
+    1.559 9.8%,
+    1.458 10.9%,
+    0.937 14.3%,
+    0.784 15.5%,
+    0.693 16.6%,
+    0.67 17.1%,
+    0.657 17.7%,
+    0.671 18.7%,
+    0.729 19.8%,
+    1.042 23.3%,
+    1.13 24.5%,
+    1.182 25.6%,
+    1.201 26.7%,
+    1.192 27.7%,
+    1.156 28.8%,
+    0.977 32.2%,
+    0.925 33.4%,
+    0.894 34.5%,
+    0.882 35.6%,
+    0.887 36.6%,
+    0.907 37.7%,
+    1.045 42.4%,
+    1.069 44.5%,
+    1.059 46.3%,
+    0.979 50.9%,
+    0.96 53.4%,
+    0.966 55.3%,
+    1.013 59.9%,
+    1.024 62.3%,
+    0.986 71.2%,
+    1.008 79.9%,
+    0.995 88.9%,
+    1
+  );
+}
+
+body {
+  background-color: #010a13;
+  color: #f0e6d2;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(10, 200, 185, 0.14) 0%, transparent 55%),
+    radial-gradient(circle at 85% 20%, rgba(200, 170, 110, 0.12) 0%, transparent 45%),
+    linear-gradient(180deg, #010a13 0%, #051122 50%, #010a13 100%);
+  min-height: 100vh;
+}
+
+/* Improve text layout & legibility on targeted elements */
+h1,
+h2,
+h3,
+.balance-heading {
+  text-wrap: balance;
+}
+
+p,
+.pretty-text {
+  text-wrap: pretty;
+}
+
+/* Individual transform properties with base identity transforms & spring easing */
+.champ-card {
+  translate: 0px 0px;
+  rotate: 0deg;
+  scale: 1;
+  transition:
+    scale 0.55s ease-out,
+    translate 0.55s ease-out,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+  transition-timing-function: var(--spring-easing);
+}
+
+.champ-card:hover {
+  translate: 0px -6px;
+  scale: 1.015;
+}
+
+.hextech-action-btn {
+  translate: 0px 0px;
+  scale: 1;
+  transition:
+    scale 0.45s ease-out,
+    translate 0.45s ease-out,
+    box-shadow 0.2s ease;
+  transition-timing-function: var(--spring-easing);
+}
+
+.hextech-action-btn:hover:not(:disabled) {
+  translate: 0px -2px;
+  scale: 1.03;
+}
+
+.hextech-action-btn:active:not(:disabled) {
+  scale: 0.97;
+}
+
+@supports not (animation-timing-function: linear(0, 1)) {
+  .champ-card,
+  .hextech-action-btn {
+    transition-duration: 0.35s;
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+@supports not (translate: 0px) {
+  .champ-card:hover {
+    transform: translate(0px, -6px) scale(1.015);
+  }
+  .hextech-action-btn:hover:not(:disabled) {
+    transform: translate(0px, -2px) scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .champ-card,
+  .hextech-action-btn {
+    transition: none;
+  }
+}
