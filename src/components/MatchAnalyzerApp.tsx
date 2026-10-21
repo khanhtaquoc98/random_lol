@@ -516,11 +516,70 @@ export function MatchAnalyzerApp() {
     []
   );
 
+  const syncUrlQueryParams = useCallback(
+    (paramsToSync: {
+      riotId?: string;
+      matchId?: string | null;
+      platform?: RiotPlatformId;
+      queue?: "ALL" | "ARAM" | "SOLO" | "FLEX";
+      mode?: "RIOT_ID" | "MATCH_ID";
+    }) => {
+      if (typeof window === "undefined") return;
+      try {
+        const url = new URL(window.location.href);
+        const sp = url.searchParams;
+
+        if (paramsToSync.mode === "MATCH_ID") {
+          sp.set("mode", "MATCH_ID");
+        } else if (paramsToSync.mode === "RIOT_ID") {
+          sp.delete("mode");
+        }
+
+        if (paramsToSync.riotId !== undefined) {
+          if (paramsToSync.riotId && paramsToSync.mode !== "MATCH_ID") {
+            sp.set("riotId", paramsToSync.riotId);
+          } else {
+            sp.delete("riotId");
+          }
+        }
+
+        if (paramsToSync.platform) {
+          sp.set("platform", paramsToSync.platform);
+        }
+
+        if (paramsToSync.queue !== undefined) {
+          if (paramsToSync.queue && paramsToSync.queue !== "ALL") {
+            sp.set("queue", paramsToSync.queue);
+          } else {
+            sp.delete("queue");
+          }
+        }
+
+        if (paramsToSync.matchId !== undefined) {
+          if (paramsToSync.matchId) {
+            sp.set("matchId", paramsToSync.matchId);
+          } else {
+            sp.delete("matchId");
+          }
+        }
+
+        const queryStr = sp.toString();
+        const nextUrl = queryStr ? `${url.pathname}?${queryStr}` : url.pathname;
+        window.history.replaceState(null, "", nextUrl);
+      } catch {
+        // ignore URL update error
+      }
+    },
+    []
+  );
+
   const executeSearchMatchList = useCallback(
     async (
       targetQuery: string,
       targetPlatform: RiotPlatformId,
-      targetQueue: "ALL" | "ARAM" | "SOLO" | "FLEX" = queueFilter
+      targetQueue: "ALL" | "ARAM" | "SOLO" | "FLEX" = queueFilter,
+      targetMode: "RIOT_ID" | "MATCH_ID" = searchMode,
+      initialMatchIdToOpen?: string
     ) => {
       const cleanedQuery = targetQuery.trim();
       if (!cleanedQuery) return;
@@ -529,11 +588,25 @@ export function MatchAnalyzerApp() {
       setIsFetchingMatch(true);
       setFetchError(null);
       setFetchWarning(null);
-      setSelectedMatch(null);
-      setAnalysis(null);
+      if (!initialMatchIdToOpen) {
+        setSelectedMatch(null);
+        setAnalysis(null);
+      }
       setHasSearchedLive(true);
 
-      if (searchMode === "RIOT_ID") {
+      // Persist search state in URL query params so F5 refresh restores it
+      syncUrlQueryParams({
+        riotId: targetMode === "RIOT_ID" ? cleanedQuery : "",
+        matchId:
+          targetMode === "MATCH_ID"
+            ? cleanedQuery
+            : initialMatchIdToOpen || null,
+        platform: targetPlatform,
+        queue: targetQueue,
+        mode: targetMode,
+      });
+
+      if (targetMode === "RIOT_ID") {
         setSearchedPlayerLabel(cleanedQuery);
         if (cleanedQuery.includes("#")) {
           saveRecentSearch({
@@ -551,7 +624,7 @@ export function MatchAnalyzerApp() {
           count: "10",
           queue: targetQueue,
         });
-        if (searchMode === "RIOT_ID") {
+        if (targetMode === "RIOT_ID") {
           params.set("riotId", cleanedQuery);
         } else {
           params.set("matchId", cleanedQuery);
@@ -573,6 +646,28 @@ export function MatchAnalyzerApp() {
 
         if (Array.isArray(data.matches) && data.matches.length > 0) {
           setMatches(data.matches);
+
+          // If restoring a specific matchId from URL on F5 refresh (or direct Match ID search)
+          const matchIdToSelect =
+            initialMatchIdToOpen ||
+            (targetMode === "MATCH_ID" ? data.matches[0]?.matchId : undefined);
+          if (matchIdToSelect) {
+            const found = data.matches.find(
+              (m: NormalizedMatchData) =>
+                m.matchId.toLowerCase() === matchIdToSelect.toLowerCase()
+            );
+            if (found) {
+              const primaryPlayer = findPrimaryPlayerInMatch(
+                found,
+                targetMode === "RIOT_ID" ? cleanedQuery : searchedPlayerLabel
+              );
+              setSelectedMatch(found);
+              setFocusedPuuid(primaryPlayer.puuid);
+              triggerAiAnalysis(found, primaryPlayer.puuid, {
+                resetPrevious: true,
+              });
+            }
+          }
         }
       } catch (err) {
         setFetchError(
@@ -584,18 +679,87 @@ export function MatchAnalyzerApp() {
         setIsFetchingMatch(false);
       }
     },
-    [searchMode, queueFilter, saveRecentSearch]
+    [
+      searchMode,
+      queueFilter,
+      searchedPlayerLabel,
+      saveRecentSearch,
+      syncUrlQueryParams,
+      triggerAiAnalysis,
+    ]
   );
+
+  // Restore search state from URL query params on mount (F5 refresh support)
+  const hasRestoredFromUrlRef = useRef(false);
+  useEffect(() => {
+    if (hasRestoredFromUrlRef.current || typeof window === "undefined") return;
+    hasRestoredFromUrlRef.current = true;
+
+    const sp = new URLSearchParams(window.location.search);
+    const urlRiotId = sp.get("riotId")?.trim() || "";
+    const urlMatchId = sp.get("matchId")?.trim() || "";
+    const rawPlatform = (sp.get("platform")?.trim() || "").toUpperCase();
+    const validPlatform = (
+      PLATFORMS.some((p) => p.id === rawPlatform) ? rawPlatform : "VN2"
+    ) as RiotPlatformId;
+    const rawQueue = (sp.get("queue")?.trim() || "ALL").toUpperCase();
+    const validQueue = (
+      ["ALL", "ARAM", "SOLO", "FLEX"].includes(rawQueue) ? rawQueue : "ALL"
+    ) as "ALL" | "ARAM" | "SOLO" | "FLEX";
+    const urlMode =
+      sp.get("mode")?.toUpperCase() === "MATCH_ID" ? "MATCH_ID" : "RIOT_ID";
+
+    if (rawPlatform) setPlatform(validPlatform);
+    if (rawQueue) setQueueFilter(validQueue);
+
+    if (urlRiotId && urlMode === "RIOT_ID") {
+      setSearchMode("RIOT_ID");
+      setQueryInput(urlRiotId);
+      setSearchedPlayerLabel(urlRiotId);
+      executeSearchMatchList(
+        urlRiotId,
+        validPlatform,
+        validQueue,
+        "RIOT_ID",
+        urlMatchId || undefined
+      );
+    } else if (urlMatchId) {
+      if (urlMode === "MATCH_ID") {
+        setSearchMode("MATCH_ID");
+        setQueryInput(urlMatchId);
+      }
+      executeSearchMatchList(
+        urlMatchId,
+        validPlatform,
+        validQueue,
+        "MATCH_ID",
+        urlMatchId
+      );
+    }
+  }, [executeSearchMatchList]);
 
   const handleQueueFilterChange = useCallback(
     (nextQueue: "ALL" | "ARAM" | "SOLO" | "FLEX") => {
       setQueueFilter(nextQueue);
       setFetchError(null);
+      syncUrlQueryParams({
+        riotId: searchMode === "RIOT_ID" ? queryInput.trim() : undefined,
+        platform,
+        queue: nextQueue,
+        mode: searchMode,
+      });
       if (hasSearchedLive && searchMode === "RIOT_ID" && queryInput.trim()) {
-        executeSearchMatchList(queryInput, platform, nextQueue);
+        executeSearchMatchList(queryInput, platform, nextQueue, "RIOT_ID");
       }
     },
-    [hasSearchedLive, searchMode, queryInput, platform, executeSearchMatchList]
+    [
+      hasSearchedLive,
+      searchMode,
+      queryInput,
+      platform,
+      executeSearchMatchList,
+      syncUrlQueryParams,
+    ]
   );
 
   const displayedMatches = useMemo(() => {
@@ -621,6 +785,13 @@ export function MatchAnalyzerApp() {
     const isDifferentMatch = selectedMatch?.matchId !== match.matchId;
     setSelectedMatch(match);
     setFocusedPuuid(primaryPlayer.puuid);
+    syncUrlQueryParams({
+      riotId: searchMode === "RIOT_ID" ? searchedPlayerLabel : undefined,
+      matchId: match.matchId,
+      platform: match.platformId || platform,
+      queue: queueFilter,
+      mode: searchMode,
+    });
     triggerAiAnalysis(match, primaryPlayer.puuid, {
       resetPrevious: isDifferentMatch,
     });
@@ -1455,11 +1626,23 @@ export function MatchAnalyzerApp() {
           <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
             <button
               type="button"
-              onClick={() => setSelectedMatch(null)}
+              onClick={() => {
+                setSelectedMatch(null);
+                syncUrlQueryParams({
+                  riotId:
+                    searchMode === "RIOT_ID" ? searchedPlayerLabel : undefined,
+                  matchId: null,
+                  platform,
+                  queue: queueFilter,
+                  mode: searchMode,
+                });
+              }}
               className="hextech-action-btn inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider bg-white text-teal-700 border border-teal-400 hover:bg-teal-50 shadow-2xs cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Quay Lại Danh Sách Trận Đấu ({matches.length})</span>
+              <span>
+                Quay Lại Danh Sách Trận Đấu ({displayedMatches.length})
+              </span>
             </button>
 
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
