@@ -46,9 +46,28 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const riotId = searchParams.get("riotId")?.trim() || "";
   const matchId = searchParams.get("matchId")?.trim() || "";
+  const queueFilter = (searchParams.get("queue")?.trim() || "ALL").toUpperCase();
   const platform = (searchParams.get("platform")?.toUpperCase() ||
     "VN2") as RiotPlatformId;
-  const count = Math.min(10, Math.max(1, Number(searchParams.get("count") || 8)));
+  const count = Math.min(15, Math.max(1, Number(searchParams.get("count") || 10)));
+
+  const filterMatchesByQueue = (list: typeof SAMPLE_MATCHES) => {
+    if (!queueFilter || queueFilter === "ALL") return list;
+    if (queueFilter === "ARAM" || queueFilter === "450") {
+      return list.filter(
+        (m) =>
+          m.gameMode === "ARAM" ||
+          m.queueName.toUpperCase().includes("ARAM")
+      );
+    }
+    if (queueFilter === "SOLO" || queueFilter === "420") {
+      return list.filter((m) => m.queueName.includes("Đơn/Đôi"));
+    }
+    if (queueFilter === "FLEX" || queueFilter === "440") {
+      return list.filter((m) => m.queueName.includes("Linh Hoạt"));
+    }
+    return list;
+  };
 
   // Allow Riot API Key from request header OR Supabase app_settings ("riot_api_key")
   const storedConfig = await getStoredRiotKeyConfig();
@@ -73,8 +92,9 @@ export async function GET(req: NextRequest) {
   // If no Riot API Key is provided, return sample matches or helpful message
   if (!apiKey) {
     if (!riotId && !matchId) {
+      const filtered = filterMatchesByQueue(SAMPLE_MATCHES);
       return NextResponse.json({
-        matches: SAMPLE_MATCHES,
+        matches: filtered.length > 0 ? filtered : SAMPLE_MATCHES,
         source: "SAMPLE_DATA",
         message: "Đang hiển thị danh sách trận đấu mẫu.",
       });
@@ -82,14 +102,17 @@ export async function GET(req: NextRequest) {
 
     // Filter sample matches by Riot ID if it matches a player in sample data
     const queryLower = riotId.toLowerCase().split("#")[0];
-    const matchedSamples = SAMPLE_MATCHES.filter((m) =>
+    const matchedByPlayer = SAMPLE_MATCHES.filter((m) =>
       [...m.blueTeam.participants, ...m.redTeam.participants].some((p) =>
         p.riotIdGameName.toLowerCase().includes(queryLower)
       )
     );
+    const baseList =
+      matchedByPlayer.length > 0 ? matchedByPlayer : SAMPLE_MATCHES;
+    const filtered = filterMatchesByQueue(baseList);
 
     return NextResponse.json({
-      matches: matchedSamples.length > 0 ? matchedSamples : SAMPLE_MATCHES,
+      matches: filtered.length > 0 ? filtered : filterMatchesByQueue(SAMPLE_MATCHES),
       source: "SAMPLE_DATA",
       warning:
         "Chưa cấu hình RIOT_API_KEY nên hệ thống trả về dữ liệu trận đấu mẫu chuẩn Match-V5 để bạn test phân tích AI ngay. Bạn có thể nhập Riot API Key (RGAPI-...) ở phần Cấu hình API để tra cứu trực tiếp từ máy chủ Riot.",
@@ -181,12 +204,26 @@ export async function GET(req: NextRequest) {
     const accountData = await accountRes.json();
     const puuid: string = accountData.puuid;
 
-    // Fetch list of Match IDs by PUUID
-    const matchIdsUrl = `https://${matchCluster}.api.riotgames.com/lol/match/v5/matches/by-puuid/${encodeURIComponent(
-      puuid
-    )}/ids?start=0&count=${count}`;
+    // Map queueFilter to Riot Match-V5 queue ID
+    let riotQueueId: number | null = null;
+    if (queueFilter === "ARAM" || queueFilter === "450") {
+      riotQueueId = 450;
+    } else if (queueFilter === "SOLO" || queueFilter === "420") {
+      riotQueueId = 420;
+    } else if (queueFilter === "FLEX" || queueFilter === "440") {
+      riotQueueId = 440;
+    } else if (queueFilter === "NORMAL" || queueFilter === "400") {
+      riotQueueId = 400;
+    }
 
-    const idsRes = await fetch(matchIdsUrl, {
+    const buildIdsUrl = (qId: number | null, limit = count) => {
+      const qParam = qId ? `&queue=${qId}` : "";
+      return `https://${matchCluster}.api.riotgames.com/lol/match/v5/matches/by-puuid/${encodeURIComponent(
+        puuid
+      )}/ids?start=0&count=${limit}${qParam}`;
+    };
+
+    const idsRes = await fetch(buildIdsUrl(riotQueueId, count), {
       headers: { "X-Riot-Token": apiKey },
       cache: "no-store",
     });
@@ -202,11 +239,44 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const matchIds: string[] = await idsRes.json();
+    let matchIds: string[] = await idsRes.json();
+
+    // If searching ARAM and queue=450 has fewer matches, also check Bridge of Progress ARAM (queue=2400)
+    if (
+      riotQueueId === 450 &&
+      (!Array.isArray(matchIds) || matchIds.length < 3)
+    ) {
+      try {
+        const aramBridgeRes = await fetch(buildIdsUrl(2400, count), {
+          headers: { "X-Riot-Token": apiKey },
+          cache: "no-store",
+        });
+        if (aramBridgeRes.ok) {
+          const bridgeIds: string[] = await aramBridgeRes.json();
+          if (Array.isArray(bridgeIds) && bridgeIds.length > 0) {
+            matchIds = Array.from(
+              new Set([...(matchIds || []), ...bridgeIds])
+            ).slice(0, count);
+          }
+        }
+      } catch {
+        // Ignore fallback error
+      }
+    }
+
     if (!Array.isArray(matchIds) || matchIds.length === 0) {
+      const modeNameVi =
+        riotQueueId === 450
+          ? "chế độ ARAM (Vực Gió Hú)"
+          : riotQueueId === 420
+          ? "chế độ Xếp Hạng Đơn/Đôi"
+          : riotQueueId === 440
+          ? "chế độ Xếp Hạng Linh Hoạt"
+          : "cụm máy chủ " + matchCluster.toUpperCase();
+
       return NextResponse.json(
         {
-          error: `Tài khoản "${gameName}#${tagLine}" chưa có trận đấu nào gần đây ở cụm máy chủ ${matchCluster.toUpperCase()}.`,
+          error: `Tài khoản "${gameName}#${tagLine}" chưa có trận đấu nào gần đây ở ${modeNameVi}. Bạn có thể chuyển sang tab "Tất Cả Chế Độ" để xem toàn bộ lịch sử đấu!`,
         },
         { status: 404 }
       );
@@ -238,6 +308,7 @@ export async function GET(req: NextRequest) {
         tagLine: accountData.tagLine || tagLine,
       },
       source: "RIOT_API",
+      queueFilter,
     });
   } catch (err) {
     return NextResponse.json(

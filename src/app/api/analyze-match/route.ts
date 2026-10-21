@@ -71,7 +71,12 @@ function buildSinglePlayerReview(
     teamByTaken.findIndex((p) => p.puuid === focused.puuid) + 1;
 
   const fullTag = `${focused.riotIdGameName}#${focused.riotIdTagline}`;
-  const roleVi = ROLE_VI_NAME[focused.role] || focused.role;
+  const isAram =
+    match.gameMode === "ARAM" ||
+    match.queueName.toUpperCase().includes("ARAM");
+  const roleVi = isAram
+    ? "đấu trường Vực Gió Hú (ARAM)"
+    : ROLE_VI_NAME[focused.role] || focused.role;
   const archetypeVi = ROLE_ARCHETYPE_VI[focused.role] || "người chơi chủ chốt";
   const kdaFormatted = Number(focused.kda).toFixed(2);
   const controlWards = focused.visionWardsBoughtInGame ?? 0;
@@ -182,11 +187,14 @@ function buildSinglePlayerReview(
 
   if (goldDiffVsOpp <= -800 && opponent) {
     weaknesses.push(
-      `Thua thiệt rõ rệt trong kèo đối đầu cùng đường với ${opponent.championName} khi bị dẫn trước ${Math.abs(goldDiffVsOpp).toLocaleString()} vàng (${focused.goldEarned.toLocaleString()} so với ${opponent.goldEarned.toLocaleString()})${
-        csDiffVsOpp < -15 ? ` và kém ${Math.abs(csDiffVsOpp)} chỉ số lính` : ""
+      `Thua thiệt rõ rệt trong kèo đối đầu với ${opponent.championName} khi bị dẫn trước ${Math.abs(goldDiffVsOpp).toLocaleString()} vàng (${focused.goldEarned.toLocaleString()} so với ${opponent.goldEarned.toLocaleString()})${
+        !isAram && csDiffVsOpp < -15
+          ? ` và kém ${Math.abs(csDiffVsOpp)} chỉ số lính`
+          : ""
       }.`
     );
   } else if (
+    !isAram &&
     focused.role !== "SP" &&
     focused.role !== "JG" &&
     focused.csPerMin < 5.8
@@ -194,53 +202,64 @@ function buildSinglePlayerReview(
     weaknesses.push(
       `Chỉ số lính còn thấp so với tiêu chuẩn đường đơn/xạ thủ: chỉ đạt ${focused.cs} lính sau ${durationMin} phút (${focused.csPerMin} CS/phút), khiến tiến độ hoàn thành trang bị lớn bị chậm lại.`
     );
-  } else if (focused.role === "JG" && focused.csPerMin < 5.0) {
+  } else if (!isAram && focused.role === "JG" && focused.csPerMin < 5.0) {
     weaknesses.push(
       `Vòng rừng chưa tối ưu khi chỉ đạt ${focused.cs} quái rừng (${focused.csPerMin} CS/phút), dẫn đến thọt cấp độ và lượng vàng so với nhịp độ trận đấu.`
     );
   }
 
-  if (controlWards === 0) {
+  if (!isAram && controlWards === 0) {
     weaknesses.push(
       `Không mua bất kỳ Mắt kiểm soát (mắt tím) nào trong suốt ${durationMin} phút thi đấu, khiến khu vực đường ${roleVi} và sông thiếu tầm nhìn bảo vệ trước các pha gank.`
     );
   }
 
-  if (focused.killParticipation < 40) {
+  if (focused.killParticipation < (isAram ? 60 : 40)) {
     weaknesses.push(
-      `Tỷ lệ tham gia giao tranh cùng đồng đội còn thấp (KP chỉ đạt ${focused.killParticipation}%), thiếu sự gắn kết trong các pha tranh chấp mục tiêu lớn.`
+      `Tỷ lệ tham gia giao tranh cùng đồng đội còn thấp (KP chỉ đạt ${focused.killParticipation}%), thiếu sự gắn kết trong các pha giao tranh tổng.`
     );
   }
 
   if (weaknesses.length === 0) {
     weaknesses.push(
-      `Dù có chỉ số cá nhân đẹp (${focused.kills}/${focused.deaths}/${focused.assists}), bạn vẫn có thể tận dụng lợi thế sớm để đảo đường hỗ trợ đồng đội và ép trụ mạnh tay hơn.`
+      isAram
+        ? `Dù có chỉ số KDA đẹp (${focused.kills}/${focused.deaths}/${focused.assists}), trong chế độ ARAM bạn cần chủ động chọn thời điểm nằm xuống hợp lý (Reset timing) khi tích nhiều vàng để sớm mua trang bị lớn trước pha giao tranh quyết định.`
+        : `Dù có chỉ số cá nhân đẹp (${focused.kills}/${focused.deaths}/${focused.assists}), bạn vẫn có thể tận dụng lợi thế sớm để đảo đường hỗ trợ đồng đội và ép trụ mạnh tay hơn.`
     );
   }
 
   // 3. Specific Actionable Advice
-  if (focused.deaths >= 6 && opponent) {
+  if (isAram) {
     actionableAdvice.push(
-      `Trong kèo ${focused.championName} đối đầu ${opponent.championName} ở ${roleVi}, khi đã bị dẫn trang bị hoặc mất Tốc Biến, hãy chủ động đóng băng lính gần trụ nhà và chờ rừng hỗ trợ thay vì cố lao lên trao đổi chiêu thức dài hơi.`
+      `Trong chế độ ARAM (Vực Gió Hú) với ${focused.championName}, hãy tận dụng tối đa bụi cỏ giữa cầu, căn chuẩn thời gian hồi Di vật máu (Health Relic) và phối hợp phép bổ trợ Đánh Dấu (Cầu Tuyết) cùng đồng đội để dồn sát thương mục tiêu chủ lực.`
     );
-  } else if (goldDiffVsOpp < -600 && opponent) {
     actionableAdvice.push(
-      `Khi cầm ${focused.championName} gặp kèo khó như ${opponent.championName}, hãy ưu tiên lên sớm trang bị phòng ngự/giày phù hợp và tận dụng kỹ năng để dọn lính an toàn, tránh mất máu quá nhiều trước khi mục tiêu lớn xuất hiện.`
+      `Khi cầm nhiều hơn 2,500 vàng trong người mà máu đã thấp, hãy chủ động đẩy cao đợt lính rồi nằm xuống hợp lý để mua trang bị hoàn chỉnh thay vì đứng lại giữ KDA nhưng thiếu sát thương trong pha combat tiếp theo.`
     );
   } else {
-    actionableAdvice.push(
-      `Với chất tướng ${archetypeVi} của ${focused.championName} (${focused.primaryRune}), hãy tận dụng ngưỡng sức mạnh khi hoàn thành món trang bị thứ 2 để chủ động ép giao tranh tại hang Rồng/Baron.`
-    );
-  }
+    if (focused.deaths >= 6 && opponent) {
+      actionableAdvice.push(
+        `Trong kèo ${focused.championName} đối đầu ${opponent.championName} ở ${roleVi}, khi đã bị dẫn trang bị hoặc mất Tốc Biến, hãy chủ động đóng băng lính gần trụ nhà và chờ rừng hỗ trợ thay vì cố lao lên trao đổi chiêu thức dài hơi.`
+      );
+    } else if (goldDiffVsOpp < -600 && opponent) {
+      actionableAdvice.push(
+        `Khi cầm ${focused.championName} gặp kèo khó như ${opponent.championName}, hãy ưu tiên lên sớm trang bị phòng ngự/giày phù hợp và tận dụng kỹ năng để dọn lính an toàn, tránh mất máu quá nhiều trước khi mục tiêu lớn xuất hiện.`
+      );
+    } else {
+      actionableAdvice.push(
+        `Với chất tướng ${archetypeVi} của ${focused.championName} (${focused.primaryRune}), hãy tận dụng ngưỡng sức mạnh khi hoàn thành món trang bị thứ 2 để chủ động ép giao tranh tại hang Rồng/Baron.`
+      );
+    }
 
-  if (controlWards === 0) {
-    actionableAdvice.push(
-      `Hãy tập thói quen mua từ 1-2 Mắt kiểm soát mỗi lần biến về khi dư 75 vàng để kiểm soát bụi cỏ sông/bùa lợi, giúp ${focused.championName} đẩy đường hoặc bắt lẻ an toàn hơn.`
-    );
-  } else {
-    actionableAdvice.push(
-      `Tiếp tục duy trì thói quen kiểm soát tầm nhìn (${focused.visionScore} điểm) và chủ động ping kêu gọi đồng đội thiết lập thế trận trước khi Rồng/Baron ra mắt 45 giây.`
-    );
+    if (controlWards === 0) {
+      actionableAdvice.push(
+        `Hãy tập thói quen mua từ 1-2 Mắt kiểm soát mỗi lần biến về khi dư 75 vàng để kiểm soát bụi cỏ sông/bùa lợi, giúp ${focused.championName} đẩy đường hoặc bắt lẻ an toàn hơn.`
+      );
+    } else {
+      actionableAdvice.push(
+        `Tiếp tục duy trì thói quen kiểm soát tầm nhìn (${focused.visionScore} điểm) và chủ động ping kêu gọi đồng đội thiết lập thế trận trước khi Rồng/Baron ra mắt 45 giây.`
+      );
+    }
   }
 
   return {
@@ -267,6 +286,12 @@ function buildSinglePlayerReview(
  */
 function buildAiPromptForAll10Players(match: NormalizedMatchData): string {
   const durationMin = (match.gameDurationSeconds / 60).toFixed(1);
+  const isAram =
+    match.gameMode === "ARAM" ||
+    match.queueName.toUpperCase().includes("ARAM");
+  const aramNote = isAram
+    ? `\n- LƯU Ý ĐẶC BIỆT (CHẾ ĐỘ ARAM - VỰC GIÓ HÚ 5v5 1 ĐƯỜNG DUY NHẤT): Bản đồ này KHÔNG có Rồng/Baron/Rừng và KHÔNG có Mắt kiểm soát (điểm tầm nhìn = 0 là hoàn toàn bình thường, tuyệt đối KHÔNG phê bình người chơi thiếu mắt hay không cắm mắt). Hãy phân tích theo đúng chuẩn chiến thuật ARAM: tương quan đội hình Cấu rỉa (Poke) vs Mở giao tranh (Engage/Cầu Tuyết Mark-Dash), kiểm soát bụi cỏ giữa cầu & Di vật máu (Health Relics), khả năng dọn lính giữ trụ và chọn thời điểm nằm xuống hợp lý (Reset timing) để tiêu vàng lên trang bị lớn.`
+    : "";
 
   const laneBlocks = ROLES_LIST.map((role) => {
     const bp = match.blueTeam.participants.find((p) => p.role === role);
@@ -309,7 +334,7 @@ Bạn là Huấn luyện viên trưởng (Head Coach - HLV) chuyên nghiệp c�
 Hãy phân tích chuyên sâu ván đấu dưới đây bằng tiếng Việt chuẩn thuật ngữ LMHT chuyên nghiệp (prio đường, nhịp biến về, thế lính slow-push/freeze, kiểm soát bụi cỏ, chiêu thức Q/W/E/R, ngưỡng sức mạnh trang bị, điều kiện thắng giao tranh 5v5) và trả về DUY NHẤT 1 đối tượng JSON hợp lệ.
 
 # THÔNG TIN TRẬN ĐẤU
-- Mã trận: ${match.matchId} (${match.queueName}) | Thời lượng: ${durationMin} phút | Phiên bản: ${match.gameVersion}
+- Mã trận: ${match.matchId} (${match.queueName}) | Chế độ: ${isAram ? "ARAM - Vực Gió Hú (1 đường 5v5)" : match.gameMode} | Thời lượng: ${durationMin} phút | Phiên bản: ${match.gameVersion}${aramNote}
 - ĐỘI XANH (teamId 100 - ${match.blueTeam.win ? "CHIẾN THẮNG" : "THẤT BẠI"}): Tổng mạng ${match.blueTeam.totalKills}, Tổng vàng ${match.blueTeam.totalGold}, Baron ${match.blueTeam.objectives.baron}, Rồng ${match.blueTeam.objectives.dragon}, Sâu Hư Không ${match.blueTeam.objectives.horde}, Trụ ${match.blueTeam.objectives.tower}.
 - ĐỘI ĐỎ (teamId 200 - ${match.redTeam.win ? "CHIẾN THẮNG" : "THẤT BẠI"}): Tổng mạng ${match.redTeam.totalKills}, Tổng vàng ${match.redTeam.totalGold}, Baron ${match.redTeam.objectives.baron}, Rồng ${match.redTeam.objectives.dragon}, Sâu Hư Không ${match.redTeam.objectives.horde}, Trụ ${match.redTeam.objectives.tower}.
 

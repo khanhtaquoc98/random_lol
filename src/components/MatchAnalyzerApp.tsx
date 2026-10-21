@@ -191,6 +191,10 @@ export function MatchAnalyzerApp() {
   const [queryInput, setQueryInput] = useState("Levi#VN2");
   const [searchedPlayerLabel, setSearchedPlayerLabel] = useState("Levi#VN2");
   const [platform, setPlatform] = useState<RiotPlatformId>("VN2");
+  const [queueFilter, setQueueFilter] = useState<
+    "ALL" | "ARAM" | "SOLO" | "FLEX"
+  >("ALL");
+  const [hasSearchedLive, setHasSearchedLive] = useState(false);
 
   // Autocomplete State
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -513,7 +517,11 @@ export function MatchAnalyzerApp() {
   );
 
   const executeSearchMatchList = useCallback(
-    async (targetQuery: string, targetPlatform: RiotPlatformId) => {
+    async (
+      targetQuery: string,
+      targetPlatform: RiotPlatformId,
+      targetQueue: "ALL" | "ARAM" | "SOLO" | "FLEX" = queueFilter
+    ) => {
       const cleanedQuery = targetQuery.trim();
       if (!cleanedQuery) return;
 
@@ -523,6 +531,7 @@ export function MatchAnalyzerApp() {
       setFetchWarning(null);
       setSelectedMatch(null);
       setAnalysis(null);
+      setHasSearchedLive(true);
 
       if (searchMode === "RIOT_ID") {
         setSearchedPlayerLabel(cleanedQuery);
@@ -539,7 +548,8 @@ export function MatchAnalyzerApp() {
       try {
         const params = new URLSearchParams({
           platform: targetPlatform,
-          count: "8",
+          count: "10",
+          queue: targetQueue,
         });
         if (searchMode === "RIOT_ID") {
           params.set("riotId", cleanedQuery);
@@ -574,8 +584,37 @@ export function MatchAnalyzerApp() {
         setIsFetchingMatch(false);
       }
     },
-    [searchMode, saveRecentSearch]
+    [searchMode, queueFilter, saveRecentSearch]
   );
+
+  const handleQueueFilterChange = useCallback(
+    (nextQueue: "ALL" | "ARAM" | "SOLO" | "FLEX") => {
+      setQueueFilter(nextQueue);
+      setFetchError(null);
+      if (hasSearchedLive && searchMode === "RIOT_ID" && queryInput.trim()) {
+        executeSearchMatchList(queryInput, platform, nextQueue);
+      }
+    },
+    [hasSearchedLive, searchMode, queryInput, platform, executeSearchMatchList]
+  );
+
+  const displayedMatches = useMemo(() => {
+    if (queueFilter === "ALL") return matches;
+    if (queueFilter === "ARAM") {
+      return matches.filter(
+        (m) =>
+          m.gameMode === "ARAM" ||
+          m.queueName.toUpperCase().includes("ARAM")
+      );
+    }
+    if (queueFilter === "SOLO") {
+      return matches.filter((m) => m.queueName.includes("Đơn/Đôi"));
+    }
+    if (queueFilter === "FLEX") {
+      return matches.filter((m) => m.queueName.includes("Linh Hoạt"));
+    }
+    return matches;
+  }, [matches, queueFilter]);
 
   const handleOpenMatchDetail = (match: NormalizedMatchData) => {
     const primaryPlayer = findPrimaryPlayerInMatch(match, searchedPlayerLabel);
@@ -712,18 +751,35 @@ export function MatchAnalyzerApp() {
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-slate-700">
-            <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
-              🐉 Rồng: <strong>{team.objectives.dragon}</strong>
-            </span>
-            <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
-              👾 Baron: <strong>{team.objectives.baron}</strong>
-            </span>
-            <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
-              🪲 Sâu: <strong>{team.objectives.horde}</strong>
-            </span>
-            <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
-              🗼 Trụ: <strong>{team.objectives.tower}</strong>
-            </span>
+            {match.gameMode === "ARAM" ||
+            match.queueName.toUpperCase().includes("ARAM") ? (
+              <>
+                <span className="px-2 py-0.5 rounded bg-cyan-50 text-cyan-800 border border-cyan-300 font-bold">
+                  ❄️ Vực Gió Hú (ARAM)
+                </span>
+                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
+                  🗼 Trụ: <strong>{team.objectives.tower}</strong>
+                </span>
+                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
+                  🏛️ Nhà lính: <strong>{team.objectives.inhibitor}</strong>
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
+                  🐉 Rồng: <strong>{team.objectives.dragon}</strong>
+                </span>
+                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
+                  👾 Baron: <strong>{team.objectives.baron}</strong>
+                </span>
+                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
+                  🪲 Sâu: <strong>{team.objectives.horde}</strong>
+                </span>
+                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
+                  🗼 Trụ: <strong>{team.objectives.tower}</strong>
+                </span>
+              </>
+            )}
           </div>
         </div>
 
@@ -1115,6 +1171,48 @@ export function MatchAnalyzerApp() {
               </span>
             </button>
           </form>
+
+          {/* Queue Mode Filter Bar (ALL / ARAM / Ranked Solo / Ranked Flex) */}
+          <div className="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mr-1">
+                Chế độ chơi:
+              </span>
+              {(
+                [
+                  { id: "ALL", label: "🎮 Tất Cả Chế Độ" },
+                  { id: "ARAM", label: "❄️ Lịch Sử ARAM (Vực Gió Hú)" },
+                  { id: "SOLO", label: "🏆 Xếp Hạng Đơn/Đôi" },
+                  { id: "FLEX", label: "⚔️ Xếp Hạng Linh Hoạt" },
+                ] as const
+              ).map((tab) => {
+                const isActive = queueFilter === tab.id;
+                const isAramTab = tab.id === "ARAM";
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    disabled={isFetchingMatch}
+                    onClick={() => handleQueueFilterChange(tab.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer border ${
+                      isActive
+                        ? isAramTab
+                          ? "bg-gradient-to-r from-cyan-600 to-sky-600 text-white border-cyan-700 shadow-xs"
+                          : "bg-teal-600 text-white border-teal-700 shadow-xs"
+                        : isAramTab
+                        ? "bg-cyan-50/70 text-cyan-800 border-cyan-200 hover:bg-cyan-100"
+                        : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+            <span className="text-[11px] text-slate-500">
+              Bấm <strong>❄️ Lịch Sử ARAM</strong> để lọc hoặc lấy 10 trận ARAM gần nhất từ Riot API
+            </span>
+          </div>
         </div>
 
         {/* Notices */}
@@ -1141,7 +1239,13 @@ export function MatchAnalyzerApp() {
             <div className="flex items-center gap-2">
               <ListFilter className="w-5 h-5 text-teal-600" />
               <h2 className="text-sm sm:text-lg font-black uppercase tracking-wider text-slate-900">
-                Danh Sách Trận Đấu Gần Nhất ({matches.length} trận)
+                {queueFilter === "ARAM"
+                  ? `Lịch Sử Đấu ARAM - Vực Gió Hú (${displayedMatches.length} trận)`
+                  : queueFilter === "SOLO"
+                  ? `Lịch Sử Xếp Hạng Đơn/Đôi (${displayedMatches.length} trận)`
+                  : queueFilter === "FLEX"
+                  ? `Lịch Sử Xếp Hạng Linh Hoạt (${displayedMatches.length} trận)`
+                  : `Danh Sách Trận Đấu Gần Nhất (${displayedMatches.length} trận)`}
               </h2>
             </div>
             <span className="text-xs text-slate-600 font-medium">
@@ -1151,12 +1255,15 @@ export function MatchAnalyzerApp() {
           </div>
 
           <div className="space-y-3">
-            {matches.map((match) => {
+            {displayedMatches.map((match) => {
               const primaryP = findPrimaryPlayerInMatch(
                 match,
                 searchedPlayerLabel
               );
               const isWin = primaryP.win;
+              const isAramMatch =
+                match.gameMode === "ARAM" ||
+                match.queueName.toUpperCase().includes("ARAM");
 
               return (
                 <div
@@ -1171,15 +1278,22 @@ export function MatchAnalyzerApp() {
                   {/* Left: Match Result + Queue + Duration */}
                   <div className="flex sm:flex-row lg:flex-col justify-between gap-2 min-w-[165px] border-b lg:border-b-0 lg:border-r border-slate-200 pb-2.5 lg:pb-0 lg:pr-4">
                     <div>
-                      <span
-                        className={`inline-block px-2.5 py-0.5 rounded text-xs font-black uppercase tracking-wider mb-1 ${
-                          isWin
-                            ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                            : "bg-rose-100 text-rose-800 border border-rose-300"
-                        }`}
-                      >
-                        {isWin ? "CHIẾN THẮNG" : "THẤT BẠI"}
-                      </span>
+                      <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                        <span
+                          className={`inline-block px-2.5 py-0.5 rounded text-xs font-black uppercase tracking-wider ${
+                            isWin
+                              ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                              : "bg-rose-100 text-rose-800 border border-rose-300"
+                          }`}
+                        >
+                          {isWin ? "CHIẾN THẮNG" : "THẤT BẠI"}
+                        </span>
+                        {isAramMatch && (
+                          <span className="inline-block px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-cyan-100 text-cyan-800 border border-cyan-300">
+                            ❄️ ARAM
+                          </span>
+                        )}
+                      </div>
                       <div className="text-xs font-bold text-slate-800 line-clamp-1">
                         {match.queueName}
                       </div>
