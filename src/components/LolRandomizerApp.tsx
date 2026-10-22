@@ -27,6 +27,7 @@ import {
   Zap,
   Rows3,
   LayoutGrid,
+  Flame,
 } from "lucide-react";
 
 type LineupState = Record<RoleId, Champion | null>;
@@ -48,6 +49,17 @@ function getCandidatePool(role: RoleId, mode: PoolMode): Champion[] {
   }
   return CHAMPIONS.filter((c) => c.roles.includes(role));
 }
+
+/**
+ * Deterministic initial lineup so SSR and Client hydration match 100%
+ */
+const INITIAL_DETERMINISTIC_LINEUP: LineupState = {
+  TOP: getCandidatePool("TOP", "ROLE_SPECIFIC")[0] || CHAMPIONS[0],
+  JG: getCandidatePool("JG", "ROLE_SPECIFIC")[0] || CHAMPIONS[1],
+  MID: getCandidatePool("MID", "ROLE_SPECIFIC")[0] || CHAMPIONS[2],
+  AD: getCandidatePool("AD", "ROLE_SPECIFIC")[0] || CHAMPIONS[3],
+  SP: getCandidatePool("SP", "ROLE_SPECIFIC")[0] || CHAMPIONS[4],
+};
 
 function pickRandomChampion(
   role: RoleId,
@@ -77,13 +89,9 @@ export function LolRandomizerApp() {
   const [fastSpin, setFastSpin] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
 
-  const [lineup, setLineup] = useState<LineupState>({
-    TOP: null,
-    JG: null,
-    MID: null,
-    AD: null,
-    SP: null,
-  });
+  const [lineup, setLineup] = useState<LineupState>(
+    INITIAL_DETERMINISTIC_LINEUP
+  );
   const [rollingRoles, setRollingRoles] = useState<Record<RoleId, boolean>>({
     TOP: false,
     JG: false,
@@ -114,7 +122,7 @@ export function LolRandomizerApp() {
   });
   const [history, setHistory] = useState<RollHistoryItem[]>([]);
   const [copied, setCopied] = useState(false);
-  const [totalRolls, setTotalRolls] = useState(0);
+  const [totalRolls, setTotalRolls] = useState(1);
 
   const timersRef = useRef<NodeJS.Timeout[]>([]);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -123,7 +131,6 @@ export function LolRandomizerApp() {
   const playCaseTickSound = useCallback(() => {
     if (!soundEnabled || typeof window === "undefined") return;
     const nowMs = performance.now();
-    // Throttle ticks when multiple rows spin simultaneously so audio stays crisp
     if (nowMs - lastTickTimeRef.current < 42) return;
     lastTickTimeRef.current = nowMs;
 
@@ -192,7 +199,7 @@ export function LolRandomizerApp() {
       actionLabel: string,
       currentLineup: LineupState,
       mode: PoolMode,
-      options?: { isInitialMount?: boolean; isFast?: boolean }
+      options?: { isFast?: boolean }
     ) => {
       if (rolesToRoll.length === 0) return;
 
@@ -220,25 +227,6 @@ export function LolRandomizerApp() {
       }
 
       setLineup(finalLineup);
-
-      if (options?.isInitialMount) {
-        setTotalRolls(1);
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString("vi-VN", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        });
-        setHistory([
-          {
-            id: `${Date.now()}-init`,
-            timestamp: timeStr,
-            actionLabel,
-            lineup: finalLineup,
-          },
-        ]);
-        return;
-      }
 
       // Trigger horizontal case-opening spin for the selected lanes
       setRollingRoles((prev) => {
@@ -298,17 +286,10 @@ export function LolRandomizerApp() {
   );
 
   useEffect(() => {
-    performRoll(
-      INITIAL_ROLES,
-      "Khởi Tạo Đội Hình 5 Đường",
-      { TOP: null, JG: null, MID: null, AD: null, SP: null },
-      "ROLE_SPECIFIC",
-      { isInitialMount: true }
-    );
     return () => {
       timersRef.current.forEach((t) => clearTimeout(t));
     };
-  }, [performRoll]);
+  }, []);
 
   const handleRollAll = () => {
     const unlockedRoles = INITIAL_ROLES.filter((r) => !lockedRoles[r]);
@@ -326,7 +307,7 @@ export function LolRandomizerApp() {
   };
 
   const handleRerollSingleLane = (role: RoleId) => {
-    performRoll([role], `Quay lại đường ${role}`, lineup, poolMode, {
+    performRoll([role], `Mở lại hòm ${role}`, lineup, poolMode, {
       isFast: fastSpin,
     });
   };
@@ -336,7 +317,7 @@ export function LolRandomizerApp() {
     if (chosen.length === 0) return;
     performRoll(
       chosen,
-      `Quay lại đường đã chọn (${chosen.join(", ")})`,
+      `Mở lại hòm đã chọn (${chosen.join(", ")})`,
       lineup,
       poolMode,
       { isFast: fastSpin }
@@ -378,431 +359,501 @@ export function LolRandomizerApp() {
   const mixedCount = activeChamps.filter((c) => c.damageType === "MIXED").length;
 
   return (
-    <div className="min-h-[calc(100dvh-4rem)] flex flex-col justify-between px-3 py-4 sm:px-6 sm:py-6 lg:px-10 max-w-[1440px] mx-auto">
-      {/* Header Section */}
-      <header className="mb-4 sm:mb-5 fluid-header-container">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-4 border-b border-slate-200">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-amber-800 text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-teal-600" />
-              <span>Skin.Club Style • 5-Lane Case Opening</span>
-            </div>
-            <h1 className="fluid-hero-title font-black tracking-tight text-slate-900 uppercase">
-              Mở Hòm Tướng 5 Đường{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-teal-600 to-sky-600">
-                TOP / JG / MID / AD / SP
-              </span>
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
-              Trải dài 5 đường thành <strong>5 hàng ngang quay hòm kiểu Skin.Club</strong>{" "}
-              với kim chỉ laser trung tâm. Bạn có thể bấm{" "}
-              <strong className="text-teal-700">Mở Hòm Cả 5 Đường</strong> hoặc{" "}
-              <strong className="text-amber-700">Quay lẻ từng hàng ngang</strong>!
-            </p>
-          </div>
-
-          {/* Mode Selector, Layout Toggle & Copy Button */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            {/* View Mode Toggle: 5 Horizontal Rows (Skin.Club) vs 5 Vertical Cards */}
-            <div className="inline-flex rounded-lg p-1 bg-slate-100 border border-slate-200">
-              <button
-                type="button"
-                onClick={() => setViewMode("SKINCLUB_ROWS")}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  viewMode === "SKINCLUB_ROWS"
-                    ? "bg-slate-900 text-amber-400 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <Rows3 className="w-3.5 h-3.5 shrink-0" />
-                <span>5 Hàng Ngang (Skin.Club)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("CLASSIC_CARDS")}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  viewMode === "CLASSIC_CARDS"
-                    ? "bg-slate-900 text-amber-400 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <LayoutGrid className="w-3.5 h-3.5 shrink-0" />
-                <span>Thẻ Dọc</span>
-              </button>
-            </div>
-
-            {/* Pool Mode Selector */}
-            <div className="inline-flex rounded-lg p-1 bg-slate-100 border border-slate-200">
-              <button
-                type="button"
-                onClick={() => setPoolMode("ROLE_SPECIFIC")}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  poolMode === "ROLE_SPECIFIC"
-                    ? "bg-amber-500 text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <Shield className="w-3.5 h-3.5 shrink-0" />
-                <span>Đúng Đường</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPoolMode("ALL_CHAMPIONS")}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  poolMode === "ALL_CHAMPIONS"
-                    ? "bg-teal-600 text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <Swords className="w-3.5 h-3.5 shrink-0" />
-                <span>Mọi Tướng</span>
-              </button>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleCopyTeam}
-              className="hextech-action-btn inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-white text-slate-700 border border-slate-300 hover:border-teal-500 hover:text-teal-700 shadow-2xs cursor-pointer"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-4 h-4 text-emerald-600" />
-                  <span className="text-emerald-700">Đã Copy!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4 text-amber-600" />
-                  <span>Copy Đội Hình</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Control Bar: Main Case Open Buttons + Speed/Sound + Quick Single-Lane Triggers */}
-        <div className="mt-4 p-3 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3.5">
-          {/* Primary Case Spin Buttons */}
-          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5">
-            <button
-              type="button"
-              onClick={handleRollAll}
-              disabled={isAnyRolling}
-              className="hextech-action-btn inline-flex items-center justify-center gap-2.5 px-5 sm:px-6 py-3 rounded-xl font-black text-xs sm:text-base uppercase tracking-wider text-slate-950 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-md cursor-pointer disabled:opacity-60"
-            >
-              <Dices
-                className={`w-5 h-5 ${isAnyRolling ? "animate-spin" : ""}`}
-              />
-              <span>
-                {isAnyRolling
-                  ? "Đang Mở Hòm..."
-                  : lockedCount > 0 && lockedCount < 5
-                  ? `Mở Hòm ${5 - lockedCount} Đường Chưa Khóa`
-                  : "🎰 Mở Hòm Cả 5 Đường"}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleRerollSelectedLanes}
-              disabled={selectedCount === 0 || isAnyRolling}
-              className={`hextech-action-btn inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-extrabold text-xs sm:text-sm uppercase tracking-wider border transition-all cursor-pointer ${
-                selectedCount > 0
-                  ? "bg-teal-600 text-white border-teal-600 shadow-md"
-                  : "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-              }`}
-            >
-              <RotateCcw className="w-4 h-4 shrink-0" />
-              <span>Quay Đường Đã Chọn ({selectedCount}/5)</span>
-            </button>
-
-            {/* Fast Spin & Sound Toggles */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setFastSpin((v) => !v)}
-                className={`inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
-                  fastSpin
-                    ? "bg-amber-50 text-amber-800 border-amber-300"
-                    : "bg-slate-50 text-slate-600 border-slate-200 hover:text-slate-900"
-                }`}
-                title="Bật/Tắt chế độ quay nhanh (1.2 giây)"
-              >
-                <Zap
-                  className={`w-3.5 h-3.5 ${
-                    fastSpin ? "text-amber-500 fill-amber-500" : "text-slate-400"
-                  }`}
-                />
-                <span>{fastSpin ? "Quay Nhanh: BẬT" : "Quay Nhanh"}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSoundEnabled((v) => !v)}
-                className={`inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
-                  soundEnabled
-                    ? "bg-teal-50 text-teal-800 border-teal-300"
-                    : "bg-slate-50 text-slate-500 border-slate-200"
-                }`}
-                title="Bật/Tắt âm thanh tạch tạch khi mở hòm"
-              >
-                {soundEnabled ? (
-                  <Volume2 className="w-3.5 h-3.5 text-teal-600" />
-                ) : (
-                  <VolumeX className="w-3.5 h-3.5 text-slate-400" />
-                )}
-                <span className="hidden sm:inline">
-                  {soundEnabled ? "Âm Thanh" : "Tắt Tiếng"}
-                </span>
-              </button>
-            </div>
-
-            {(selectedCount > 0 || lockedCount > 0) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedRoles({
-                    TOP: false,
-                    JG: false,
-                    MID: false,
-                    AD: false,
-                    SP: false,
-                  });
-                  setLockedRoles({
-                    TOP: false,
-                    JG: false,
-                    MID: false,
-                    AD: false,
-                    SP: false,
-                  });
-                }}
-                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 border border-slate-200 cursor-pointer"
-              >
-                <Unlock className="w-3.5 h-3.5" />
-                <span>Bỏ Chọn/Khóa</span>
-              </button>
-            )}
-          </div>
-
-          {/* Quick Single-Lane Spin Pills */}
-          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 pt-3 xl:pt-0 border-t xl:border-t-0 border-slate-200">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 mr-1">
-              Mở lẻ 1 hàng:
+    <div className="min-h-[calc(100dvh-4rem)] bg-[#080b13] text-slate-100 flex flex-col justify-between px-3 py-4 sm:px-6 sm:py-6 lg:px-10">
+      <div className="w-full max-w-[1440px] mx-auto">
+        {/* SKIN.CLUB SIGNATURE LIVE DROPS TICKER BAR */}
+        <div className="mb-4 rounded-2xl bg-[#0e1322] border border-[#1e2742] p-2.5 sm:px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shadow-lg">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/40 text-amber-300 text-[11px] font-black uppercase tracking-wider">
+              <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+              <span>LIVE DROPS • ĐỘI HÌNH HIỆN TẠI</span>
             </span>
-            <div className="grid grid-cols-5 sm:flex sm:flex-wrap gap-1.5">
-              {ROLES.map((role) => (
-                <button
-                  key={role.id}
-                  type="button"
-                  onClick={() => handleRerollSingleLane(role.id)}
-                  disabled={rollingRoles[role.id]}
-                  className="hextech-action-btn inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-slate-50 hover:bg-amber-50 text-slate-800 hover:text-amber-800 border border-slate-200 hover:border-amber-400 cursor-pointer disabled:opacity-50"
-                >
-                  <span style={{ color: role.accentColor }}>
-                    <RoleIcon role={role.id} className="w-3.5 h-3.5" />
-                  </span>
-                  <span>{role.shortName}</span>
-                </button>
-              ))}
-            </div>
           </div>
-        </div>
-      </header>
 
-      {/* Main Content: 5-Row Skin.Club Case Opening OR 5-Column Cards */}
-      <main className="flex-1">
-        {viewMode === "SKINCLUB_ROWS" ? (
-          <section
-            aria-label="5 Hàng Ngang Mở Hòm Tướng Kiểu Skin.Club"
-            className="space-y-3"
-          >
-            {ROLES.map((role, index) => {
-              const candidatePool = getCandidatePool(role.id, poolMode);
-              const spinDurationMs =
-                (fastSpin ? 1150 : 2500) + index * (fastSpin ? 90 : 180);
+          <div className="grid grid-cols-5 gap-1.5 sm:gap-2.5 flex-1 max-w-3xl">
+            {ROLES.map((r) => {
+              const ch = lineup[r.id];
+              const isRollingLane = rollingRoles[r.id];
+              const bottomBar =
+                ch?.damageType === "AD"
+                  ? "bg-[#eb4b4b]"
+                  : ch?.damageType === "AP"
+                  ? "bg-[#d32ce6]"
+                  : ch?.damageType === "MIXED"
+                  ? "bg-[#8847ff]"
+                  : "bg-[#4b69ff]";
 
               return (
-                <SkinClubLaneRow
-                  key={role.id}
-                  role={role}
-                  champion={lineup[role.id]}
-                  candidatePool={candidatePool}
-                  spinTriggerId={spinTriggers[role.id]}
-                  spinDurationMs={spinDurationMs}
-                  isRolling={rollingRoles[role.id]}
-                  isLocked={lockedRoles[role.id]}
-                  isSelectedForReroll={selectedRoles[role.id]}
-                  onRerollLane={() => handleRerollSingleLane(role.id)}
-                  onToggleLock={() => toggleLockRole(role.id)}
-                  onToggleSelect={() => toggleSelectRole(role.id)}
-                  onTickSound={playCaseTickSound}
-                />
-              );
-            })}
-          </section>
-        ) : (
-          <section
-            aria-label="Đội hình 5 đường Liên Minh Huyền Thoại"
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4"
-          >
-            {ROLES.map((role, index) => {
-              const poolCount = getCandidatePool(role.id, poolMode).length;
-              return (
-                <ChampionSlotCard
-                  key={role.id}
-                  role={role}
-                  champion={lineup[role.id]}
-                  isRolling={rollingRoles[role.id]}
-                  isLocked={lockedRoles[role.id]}
-                  isSelectedForReroll={selectedRoles[role.id]}
-                  poolCount={poolCount}
-                  isPriorityImage={index === 0}
-                  onRerollLane={() => handleRerollSingleLane(role.id)}
-                  onToggleLock={() => toggleLockRole(role.id)}
-                  onToggleSelect={() => toggleSelectRole(role.id)}
-                />
-              );
-            })}
-          </section>
-        )}
-
-        {/* Team Composition Summary & Roll History */}
-        <div className="mt-5 sm:mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
-          {/* Team Composition Analysis */}
-          <section className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                  <Swords className="w-4 h-4 text-teal-600" />
-                  <span>Phân Tích Đội Hình Trúng Hòm</span>
-                </h2>
-                <span className="text-xs text-slate-500">
-                  Lượt mở:{" "}
-                  <strong className="text-slate-900">{totalRolls}</strong>
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2.5 text-xs mb-3">
-                <div className="p-2.5 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-between">
-                  <span className="text-orange-800 font-semibold">
-                    Vật Lý (AD)
-                  </span>
-                  <span className="text-base font-black text-orange-950">
-                    {adCount}
-                  </span>
-                </div>
-                <div className="p-2.5 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-between">
-                  <span className="text-sky-800 font-semibold">
-                    Phép Thuật (AP)
-                  </span>
-                  <span className="text-base font-black text-sky-950">
-                    {apCount}
-                  </span>
-                </div>
-                <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-between">
-                  <span className="text-emerald-800 font-semibold">
-                    Đỡ Đòn (Tank)
-                  </span>
-                  <span className="text-base font-black text-emerald-950">
-                    {tankCount}
-                  </span>
-                </div>
-                <div className="p-2.5 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-between">
-                  <span className="text-purple-800 font-semibold">Hỗn Hợp</span>
-                  <span className="text-base font-black text-purple-950">
-                    {mixedCount}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-600">
-              <div className="flex items-center gap-1.5 font-bold text-slate-900 mb-1">
-                <CheckSquare className="w-3.5 h-3.5 text-teal-600" />
-                <span>Mẹo mở hòm Skin.Club:</span>
-              </div>
-              <p>
-                Mỗi hàng ngang là 1 hòm tướng theo đường. Bấm{" "}
-                <strong>&ldquo;Quay [Đường]&rdquo;</strong> ở đầu mỗi hàng để quay lẻ 1
-                đường, hoặc bấm <strong>&ldquo;Khóa&rdquo;</strong> để giữ lại tướng yêu
-                thích khi quay các hàng còn lại!
-              </p>
-            </div>
-          </section>
-
-          {/* Roll History List */}
-          <section className="lg:col-span-2 p-4 rounded-xl bg-white border border-slate-200 shadow-xs">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <History className="w-4 h-4 text-teal-600" />
-                <span>Lịch Sử Mở Hòm Gần Đây (Bấm để khôi phục)</span>
-              </h2>
-              {history.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setHistory([])}
-                  className="text-xs text-slate-500 hover:text-slate-900 underline cursor-pointer"
+                <div
+                  key={r.id}
+                  onClick={() => handleRerollSingleLane(r.id)}
+                  title={`Bấm để quay lại hòm ${r.shortName}`}
+                  className="group relative rounded-xl overflow-hidden bg-[#141b2e] hover:bg-[#1b243d] border border-[#253052] px-2 py-1.5 flex items-center gap-2 cursor-pointer transition-all"
                 >
-                  Xóa lịch sử
-                </button>
-              )}
-            </div>
-
-            {history.length === 0 ? (
-              <p className="text-xs text-slate-400 py-6 text-center">
-                Chưa có lịch sử mở hòm nào.
-              </p>
-            ) : (
-              <div className="scrollable-panel space-y-2 max-h-[210px] pr-1">
-                {history.map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => setLineup(item.lineup)}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg bg-slate-50 hover:bg-teal-50/70 border border-slate-200 hover:border-teal-400 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2 min-w-[150px]">
-                      <span className="text-[11px] font-mono text-slate-500">
-                        {item.timestamp}
-                      </span>
-                      <span className="text-xs font-bold text-teal-700 truncate">
-                        {item.actionLabel}
-                      </span>
+                  {ch && (
+                    <img
+                      src={getChampionSquareUrl(ch.id)}
+                      alt={ch.name}
+                      width={32}
+                      height={32}
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg object-cover border border-amber-400/50 shrink-0 ${
+                        isRollingLane ? "animate-pulse blur-[1px]" : ""
+                      }`}
+                    />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div
+                      className="text-[9px] font-black uppercase tracking-wider truncate"
+                      style={{ color: r.accentColor }}
+                    >
+                      {r.shortName}
                     </div>
-
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {ROLES.map((r) => {
-                        const ch = item.lineup[r.id];
-                        return (
-                          <div
-                            key={r.id}
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white border border-slate-200 text-xs shadow-2xs"
-                          >
-                            <span className="font-extrabold text-[10px] text-slate-700">
-                              {r.shortName}:
-                            </span>
-                            {ch && (
-                              <img
-                                src={getChampionSquareUrl(ch.id)}
-                                alt={ch.name}
-                                width={18}
-                                height={18}
-                                loading="lazy"
-                                className="w-4 h-4 rounded-xs object-cover"
-                              />
-                            )}
-                            <span className="text-slate-900 font-medium">
-                              {ch?.name ?? "-"}
-                            </span>
-                          </div>
-                        );
-                      })}
+                    <div className="text-[11px] sm:text-xs font-extrabold text-white truncate">
+                      {isRollingLane ? "Đang mở..." : ch?.name ?? "-"}
                     </div>
                   </div>
+                  <div
+                    className={`absolute bottom-0 inset-x-0 h-[3px] ${bottomBar}`}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Header Section */}
+        <header className="mb-4 sm:mb-5 fluid-header-container">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-4 border-b border-[#1d253d]">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#151c30] border border-amber-500/40 text-amber-300 text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-2 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>SKIN.CLUB CASE BATTLE • 5-LANE ROULETTE</span>
+              </div>
+              <h1 className="fluid-hero-title font-black tracking-tight text-white uppercase">
+                Mở Hòm Tướng 5 Đường{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-cyan-400">
+                  SKIN.CLUB EDITION
+                </span>
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
+                Trải nghiệm mở hòm 5 hàng ngang chuẩn <strong className="text-amber-300">Skin.Club / CS2</strong> với vạch độ hiếm{" "}
+                <span className="text-[#eb4b4b] font-bold">Covert</span>,{" "}
+                <span className="text-[#d32ce6] font-bold">Classified</span>,{" "}
+                <span className="text-[#8847ff] font-bold">Restricted</span> và{" "}
+                <span className="text-amber-300 font-bold">Gold Special</span>.
+              </p>
+            </div>
+
+            {/* Mode Selector, Layout Toggle & Copy Button */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+              {/* View Mode Toggle: 5 Horizontal Rows (Skin.Club) vs 5 Vertical Cards */}
+              <div className="inline-flex rounded-xl p-1 bg-[#111728] border border-[#232d4b]">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("SKINCLUB_ROWS")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                    viewMode === "SKINCLUB_ROWS"
+                      ? "bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 shadow-[0_0_14px_rgba(245,158,11,0.4)]"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <Rows3 className="w-3.5 h-3.5 shrink-0" />
+                  <span>5 Hàng Ngang</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("CLASSIC_CARDS")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                    viewMode === "CLASSIC_CARDS"
+                      ? "bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 shadow-[0_0_14px_rgba(245,158,11,0.4)]"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <LayoutGrid className="w-3.5 h-3.5 shrink-0" />
+                  <span>Thẻ Dọc</span>
+                </button>
+              </div>
+
+              {/* Pool Mode Selector */}
+              <div className="inline-flex rounded-xl p-1 bg-[#111728] border border-[#232d4b]">
+                <button
+                  type="button"
+                  onClick={() => setPoolMode("ROLE_SPECIFIC")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                    poolMode === "ROLE_SPECIFIC"
+                      ? "bg-[#222c49] text-amber-300 border border-amber-400/40"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <Shield className="w-3.5 h-3.5 shrink-0" />
+                  <span>Đúng Đường</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPoolMode("ALL_CHAMPIONS")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                    poolMode === "ALL_CHAMPIONS"
+                      ? "bg-[#222c49] text-cyan-300 border border-cyan-400/40"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <Swords className="w-3.5 h-3.5 shrink-0" />
+                  <span>Mọi Tướng</span>
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleCopyTeam}
+                className="hextech-action-btn inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-[#141b2e] text-slate-200 border border-[#283456] hover:border-amber-400 hover:text-amber-300 cursor-pointer"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-400" />
+                    <span className="text-emerald-400">Đã Copy!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 text-amber-400" />
+                    <span>Copy Đội Hình</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Control Deck: Main Case Open Buttons + Speed/Sound + Quick Single-Lane Triggers */}
+          <div className="mt-4 p-3.5 sm:p-4 rounded-2xl bg-[#101524] border border-[#1f2844] shadow-xl flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3.5">
+            {/* Primary Case Spin Buttons */}
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5">
+              <button
+                type="button"
+                onClick={handleRollAll}
+                disabled={isAnyRolling}
+                className="hextech-action-btn inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-black text-xs sm:text-base uppercase tracking-wider text-slate-950 bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 shadow-[0_0_25px_rgba(245,158,11,0.45)] cursor-pointer disabled:opacity-60"
+              >
+                <Dices
+                  className={`w-5 h-5 ${isAnyRolling ? "animate-spin" : ""}`}
+                />
+                <span>
+                  {isAnyRolling
+                    ? "Đang Mở Hòm..."
+                    : lockedCount > 0 && lockedCount < 5
+                    ? `Mở Hòm ${5 - lockedCount} Đường Chưa Khóa`
+                    : "🎰 Mở Hòm Cả 5 Đường"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleRerollSelectedLanes}
+                disabled={selectedCount === 0 || isAnyRolling}
+                className={`hextech-action-btn inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-extrabold text-xs sm:text-sm uppercase tracking-wider border transition-all cursor-pointer ${
+                  selectedCount > 0
+                    ? "bg-gradient-to-r from-cyan-400 to-teal-400 text-slate-950 border-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+                    : "bg-[#171e33] text-slate-500 border-[#232d4b] cursor-not-allowed"
+                }`}
+              >
+                <RotateCcw className="w-4 h-4 shrink-0" />
+                <span>Mở Hòm Đã Chọn ({selectedCount}/5)</span>
+              </button>
+
+              {/* Fast Spin & Sound Toggles */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFastSpin((v) => !v)}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-extrabold border transition-colors cursor-pointer ${
+                    fastSpin
+                      ? "bg-amber-400/20 text-amber-300 border-amber-400/60 shadow-[0_0_12px_rgba(245,158,11,0.25)]"
+                      : "bg-[#171e33] text-slate-300 border-[#253050] hover:text-white"
+                  }`}
+                  title="Bật/Tắt chế độ mở hòm nhanh (1.2 giây)"
+                >
+                  <Zap
+                    className={`w-3.5 h-3.5 ${
+                      fastSpin
+                        ? "text-amber-400 fill-amber-400"
+                        : "text-slate-400"
+                    }`}
+                  />
+                  <span>{fastSpin ? "Mở Nhanh: BẬT" : "Mở Nhanh"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSoundEnabled((v) => !v)}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-extrabold border transition-colors cursor-pointer ${
+                    soundEnabled
+                      ? "bg-cyan-400/15 text-cyan-300 border-cyan-400/50"
+                      : "bg-[#171e33] text-slate-400 border-[#253050]"
+                  }`}
+                  title="Bật/Tắt âm thanh tạch tạch khi mở hòm"
+                >
+                  {soundEnabled ? (
+                    <Volume2 className="w-3.5 h-3.5 text-cyan-400" />
+                  ) : (
+                    <VolumeX className="w-3.5 h-3.5 text-slate-500" />
+                  )}
+                  <span className="hidden sm:inline">
+                    {soundEnabled ? "Âm Thanh" : "Tắt Tiếng"}
+                  </span>
+                </button>
+              </div>
+
+              {(selectedCount > 0 || lockedCount > 0) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRoles({
+                      TOP: false,
+                      JG: false,
+                      MID: false,
+                      AD: false,
+                      SP: false,
+                    });
+                    setLockedRoles({
+                      TOP: false,
+                      JG: false,
+                      MID: false,
+                      AD: false,
+                      SP: false,
+                    });
+                  }}
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white bg-[#1a223a] border border-[#2a3659] cursor-pointer"
+                >
+                  <Unlock className="w-3.5 h-3.5" />
+                  <span>Bỏ Chọn/Khóa</span>
+                </button>
+              )}
+            </div>
+
+            {/* Quick Single-Lane Spin Pills */}
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 pt-3 xl:pt-0 border-t xl:border-t-0 border-[#1f2844]">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">
+                Mở lẻ 1 hòm:
+              </span>
+              <div className="grid grid-cols-5 sm:flex sm:flex-wrap gap-1.5">
+                {ROLES.map((role) => (
+                  <button
+                    key={role.id}
+                    type="button"
+                    onClick={() => handleRerollSingleLane(role.id)}
+                    disabled={rollingRoles[role.id]}
+                    className="hextech-action-btn inline-flex items-center justify-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-[#161e33] hover:bg-[#1f2a47] text-slate-200 hover:text-amber-300 border border-[#263254] hover:border-amber-400/60 cursor-pointer disabled:opacity-50"
+                  >
+                    <span style={{ color: role.accentColor }}>
+                      <RoleIcon role={role.id} className="w-3.5 h-3.5" />
+                    </span>
+                    <span>{role.shortName}</span>
+                  </button>
                 ))}
               </div>
-            )}
-          </section>
-        </div>
-      </main>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content: 5-Row Skin.Club Case Opening OR 5-Column Cards */}
+        <main className="flex-1">
+          {viewMode === "SKINCLUB_ROWS" ? (
+            <section
+              aria-label="5 Hàng Ngang Mở Hòm Tướng Kiểu Skin.Club"
+              className="space-y-3.5"
+            >
+              {ROLES.map((role, index) => {
+                const candidatePool = getCandidatePool(role.id, poolMode);
+                const spinDurationMs =
+                  (fastSpin ? 1150 : 2500) + index * (fastSpin ? 90 : 180);
+
+                return (
+                  <SkinClubLaneRow
+                    key={role.id}
+                    role={role}
+                    champion={lineup[role.id]}
+                    candidatePool={candidatePool}
+                    spinTriggerId={spinTriggers[role.id]}
+                    spinDurationMs={spinDurationMs}
+                    isRolling={rollingRoles[role.id]}
+                    isLocked={lockedRoles[role.id]}
+                    isSelectedForReroll={selectedRoles[role.id]}
+                    onRerollLane={() => handleRerollSingleLane(role.id)}
+                    onToggleLock={() => toggleLockRole(role.id)}
+                    onToggleSelect={() => toggleSelectRole(role.id)}
+                    onTickSound={playCaseTickSound}
+                  />
+                );
+              })}
+            </section>
+          ) : (
+            <section
+              aria-label="Đội hình 5 đường Liên Minh Huyền Thoại"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4"
+            >
+              {ROLES.map((role, index) => {
+                const poolCount = getCandidatePool(role.id, poolMode).length;
+                return (
+                  <ChampionSlotCard
+                    key={role.id}
+                    role={role}
+                    champion={lineup[role.id]}
+                    isRolling={rollingRoles[role.id]}
+                    isLocked={lockedRoles[role.id]}
+                    isSelectedForReroll={selectedRoles[role.id]}
+                    poolCount={poolCount}
+                    isPriorityImage={index === 0}
+                    onRerollLane={() => handleRerollSingleLane(role.id)}
+                    onToggleLock={() => toggleLockRole(role.id)}
+                    onToggleSelect={() => toggleSelectRole(role.id)}
+                  />
+                );
+              })}
+            </section>
+          )}
+
+          {/* Team Composition Summary & Roll History (Skin.Club Dark Theme) */}
+          <div className="mt-5 sm:mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
+            {/* Team Composition Analysis */}
+            <section className="p-4 rounded-2xl bg-[#101524] border border-[#1f2844] shadow-lg flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white flex items-center gap-2">
+                    <Swords className="w-4 h-4 text-amber-400" />
+                    <span>Tỷ Lệ Độ Hiếm &amp; Sát Thương Đội Hình</span>
+                  </h2>
+                  <span className="text-xs text-slate-400">
+                    Số hòm đã mở:{" "}
+                    <strong className="text-amber-300">{totalRolls}</strong>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5 text-xs mb-3">
+                  <div className="p-2.5 rounded-xl bg-[#24131a] border border-[#eb4b4b]/40 flex items-center justify-between">
+                    <span className="text-rose-300 font-bold">
+                      Covert AD (Vật Lý)
+                    </span>
+                    <span className="text-base font-black text-white">
+                      {adCount}
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#22132a] border border-[#d32ce6]/40 flex items-center justify-between">
+                    <span className="text-fuchsia-300 font-bold">
+                      Classified AP (Phép)
+                    </span>
+                    <span className="text-base font-black text-white">
+                      {apCount}
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#121c30] border border-[#4b69ff]/40 flex items-center justify-between">
+                    <span className="text-sky-300 font-bold">
+                      Mil-Spec Tank (Đỡ Đòn)
+                    </span>
+                    <span className="text-base font-black text-white">
+                      {tankCount}
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#1b1430] border border-[#8847ff]/40 flex items-center justify-between">
+                    <span className="text-purple-300 font-bold">
+                      Restricted (Hỗn Hợp)
+                    </span>
+                    <span className="text-base font-black text-white">
+                      {mixedCount}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-[#0b0e18] border border-[#1d253e] text-xs text-slate-400">
+                <div className="flex items-center gap-1.5 font-bold text-amber-300 mb-1">
+                  <CheckSquare className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Hướng dẫn Case Battle 5 Đường:</span>
+                </div>
+                <p>
+                  Bấm <strong>&ldquo;Mở [TOP/JG/MID/AD/SP]&rdquo;</strong> ở đầu
+                  mỗi hàng để quay lẻ 1 hòm, hoặc bấm biểu tượng{" "}
+                  <strong>Ổ Khóa</strong> để giữ lại tướng Gold Special đã trúng!
+                </p>
+              </div>
+            </section>
+
+            {/* Roll History List */}
+            <section className="lg:col-span-2 p-4 rounded-2xl bg-[#101524] border border-[#1f2844] shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white flex items-center gap-2">
+                  <History className="w-4 h-4 text-amber-400" />
+                  <span>Lịch Sử Mở Hòm Gần Đây (Bấm để khôi phục đội hình)</span>
+                </h2>
+                {history.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setHistory([])}
+                    className="text-xs text-slate-400 hover:text-amber-300 underline cursor-pointer"
+                  >
+                    Xóa lịch sử
+                  </button>
+                )}
+              </div>
+
+              {history.length === 0 ? (
+                <p className="text-xs text-slate-400 py-6 text-center">
+                  Hãy bấm <strong>&ldquo;🎰 Mở Hòm Cả 5 Đường&rdquo;</strong> để
+                  bắt đầu quay hòm và lưu lịch sử!
+                </p>
+              ) : (
+                <div className="scrollable-panel space-y-2 max-h-[210px] pr-1">
+                  {history.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => setLineup(item.lineup)}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-xl bg-[#151c30] hover:bg-[#1c2540] border border-[#253152] hover:border-amber-400/60 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2 min-w-[150px]">
+                        <span className="text-[11px] font-mono text-slate-400">
+                          {item.timestamp}
+                        </span>
+                        <span className="text-xs font-bold text-amber-300 truncate">
+                          {item.actionLabel}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {ROLES.map((r) => {
+                          const ch = item.lineup[r.id];
+                          return (
+                            <div
+                              key={r.id}
+                              className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#0c101c] border border-[#242f4d] text-xs"
+                            >
+                              <span
+                                className="font-black text-[10px]"
+                                style={{ color: r.accentColor }}
+                              >
+                                {r.shortName}:
+                              </span>
+                              {ch && (
+                                <img
+                                  src={getChampionSquareUrl(ch.id)}
+                                  alt={ch.name}
+                                  width={18}
+                                  height={18}
+                                  loading="lazy"
+                                  className="w-4 h-4 rounded-xs object-cover"
+                                />
+                              )}
+                              <span className="text-slate-100 font-semibold">
+                                {ch?.name ?? "-"}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
