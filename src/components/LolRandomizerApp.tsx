@@ -294,20 +294,20 @@ export function LolRandomizerApp() {
   const handleRollAll = () => {
     const unlockedRoles = INITIAL_ROLES.filter((r) => !lockedRoles[r]);
     if (unlockedRoles.length === 0) {
-      performRoll(INITIAL_ROLES, "Mở Hòm Cả 5 Đường", lineup, poolMode, {
+      performRoll(INITIAL_ROLES, "Mở Tướng Cả 5 Đường", lineup, poolMode, {
         isFast: fastSpin,
       });
       return;
     }
     const label =
       unlockedRoles.length === 5
-        ? "Mở Hòm Cả 5 Đường"
-        : `Mở Hòm ${unlockedRoles.length} Đường (${unlockedRoles.join(", ")})`;
+        ? "Mở Tướng Cả 5 Đường"
+        : `Mở Tướng ${unlockedRoles.length} Đường (${unlockedRoles.join(", ")})`;
     performRoll(unlockedRoles, label, lineup, poolMode, { isFast: fastSpin });
   };
 
   const handleRerollSingleLane = (role: RoleId) => {
-    performRoll([role], `Mở lại hòm ${role}`, lineup, poolMode, {
+    performRoll([role], `Mở lại tướng ${role}`, lineup, poolMode, {
       isFast: fastSpin,
     });
   };
@@ -317,7 +317,7 @@ export function LolRandomizerApp() {
     if (chosen.length === 0) return;
     performRoll(
       chosen,
-      `Mở lại hòm đã chọn (${chosen.join(", ")})`,
+      `Mở lại tướng đã chọn (${chosen.join(", ")})`,
       lineup,
       poolMode,
       { isFast: fastSpin }
@@ -336,7 +336,7 @@ export function LolRandomizerApp() {
     const lines = ROLES.map(
       (r) => `${r.shortName} (${r.name}): ${lineup[r.id]?.name ?? "Chưa có"}`
     );
-    const text = `🎰 ĐỘI HÌNH LMHT MỞ HÒM 5 ĐƯỜNG:\n${lines.join("\n")}`;
+    const text = `ĐỘI HÌNH LMHT MỞ TƯỚNG 5 ĐƯỜNG:\n${lines.join("\n")}`;
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -387,7 +387,7 @@ export function LolRandomizerApp() {
                 <div
                   key={r.id}
                   onClick={() => handleRerollSingleLane(r.id)}
-                  title={`Bấm để quay lại hòm ${r.shortName}`}
+                  title={`Bấm để mở lại tướng đường ${r.shortName}`}
                   className="group relative rounded-xl overflow-hidden bg-[#141b2e] hover:bg-[#1b243d] border border-[#253052] px-2 py-1.5 flex items-center gap-2 cursor-pointer transition-all"
                 >
                   {ch && (
@@ -427,21 +427,14 @@ export function LolRandomizerApp() {
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#151c30] border border-amber-500/40 text-amber-300 text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-2 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>SKIN.CLUB CASE BATTLE • 5-LANE ROULETTE</span>
+                <span>SKIN.CLUB EDITION • 5-LANE ROULETTE</span>
               </div>
               <h1 className="fluid-hero-title font-black tracking-tight text-white uppercase">
-                Mở Hòm Tướng 5 Đường{" "}
+                Mở Tướng 5 Đường{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-cyan-400">
                   SKIN.CLUB EDITION
                 </span>
               </h1>
-              <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
-                Trải nghiệm mở hòm 5 hàng ngang chuẩn <strong className="text-amber-300">Skin.Club / CS2</strong> với vạch độ hiếm{" "}
-                <span className="text-[#eb4b4b] font-bold">Covert</span>,{" "}
-                <span className="text-[#d32ce6] font-bold">Classified</span>,{" "}
-                <span className="text-[#8847ff] font-bold">Restricted</span> và{" "}
-                <span className="text-amber-300 font-bold">Gold Special</span>.
-              </p>
             </div>
 
             {/* Mode Selector, Layout Toggle & Copy Button */}
@@ -537,10 +530,10 @@ export function LolRandomizerApp() {
                 />
                 <span>
                   {isAnyRolling
-                    ? "Đang Mở Hòm..."
+                    ? "Đang Mở Tướng..."
                     : lockedCount > 0 && lockedCount < 5
-                    ? `Mở Hòm ${5 - lockedCount} Đường Chưa Khóa`
-                    : "🎰 Mở Hòm Cả 5 Đường"}
+                    ? `Mở Tướng ${5 - lockedCount} Đường Chưa Khóa`
+                    : "Mở Tướng Cả 5 Đường"}
                 </span>
               </button>
 
@@ -555,7 +548,7 @@ export function LolRandomizerApp() {
                 }`}
               >
                 <RotateCcw className="w-4 h-4 shrink-0" />
-                <span>Mở Hòm Đã Chọn ({selectedCount}/5)</span>
+                <span>Mở Đường Đã Chọn ({selectedCount}/5)</span>
               </button>
 
               {/* Fast Spin & Sound Toggles */}
@@ -568,7 +561,7 @@ export function LolRandomizerApp() {
                       ? "bg-amber-400/20 text-amber-300 border-amber-400/60 shadow-[0_0_12px_rgba(245,158,11,0.25)]"
                       : "bg-[#171e33] text-slate-300 border-[#253050] hover:text-white"
                   }`}
-                  title="Bật/Tắt chế độ mở hòm nhanh (1.2 giây)"
+                  title="Bật/Tắt chế độ mở tướng nhanh (1.2 giây)"
                 >
                   <Zap
                     className={`w-3.5 h-3.5 ${
@@ -588,7 +581,7 @@ export function LolRandomizerApp() {
                       ? "bg-cyan-400/15 text-cyan-300 border-cyan-400/50"
                       : "bg-[#171e33] text-slate-400 border-[#253050]"
                   }`}
-                  title="Bật/Tắt âm thanh tạch tạch khi mở hòm"
+                  title="Bật/Tắt âm thanh tạch tạch khi mở tướng"
                 >
                   {soundEnabled ? (
                     <Volume2 className="w-3.5 h-3.5 text-cyan-400" />
@@ -631,7 +624,7 @@ export function LolRandomizerApp() {
             {/* Quick Single-Lane Spin Pills */}
             <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 pt-3 xl:pt-0 border-t xl:border-t-0 border-[#1f2844]">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">
-                Mở lẻ 1 hòm:
+                Mở lẻ 1 đường:
               </span>
               <div className="grid grid-cols-5 sm:flex sm:flex-wrap gap-1.5">
                 {ROLES.map((role) => (
@@ -657,7 +650,7 @@ export function LolRandomizerApp() {
         <main className="flex-1">
           {viewMode === "SKINCLUB_ROWS" ? (
             <section
-              aria-label="5 Hàng Ngang Mở Hòm Tướng Kiểu Skin.Club"
+              aria-label="5 Hàng Ngang Mở Tướng Kiểu Skin.Club"
               className="space-y-3.5"
             >
               {ROLES.map((role, index) => {
@@ -721,7 +714,7 @@ export function LolRandomizerApp() {
                     <span>Tỷ Lệ Độ Hiếm &amp; Sát Thương Đội Hình</span>
                   </h2>
                   <span className="text-xs text-slate-400">
-                    Số hòm đã mở:{" "}
+                    Số lượt mở:{" "}
                     <strong className="text-amber-300">{totalRolls}</strong>
                   </span>
                 </div>
@@ -765,12 +758,12 @@ export function LolRandomizerApp() {
               <div className="p-3 rounded-xl bg-[#0b0e18] border border-[#1d253e] text-xs text-slate-400">
                 <div className="flex items-center gap-1.5 font-bold text-amber-300 mb-1">
                   <CheckSquare className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Hướng dẫn Case Battle 5 Đường:</span>
+                  <span>Hướng dẫn Mở Tướng 5 Đường:</span>
                 </div>
                 <p>
                   Bấm <strong>&ldquo;Mở [TOP/JG/MID/AD/SP]&rdquo;</strong> ở đầu
-                  mỗi hàng để quay lẻ 1 hòm, hoặc bấm biểu tượng{" "}
-                  <strong>Ổ Khóa</strong> để giữ lại tướng Gold Special đã trúng!
+                  mỗi hàng để mở lẻ 1 đường, hoặc bấm biểu tượng{" "}
+                  <strong>Ổ Khóa</strong> để giữ lại tướng đã mở trúng!
                 </p>
               </div>
             </section>
@@ -780,7 +773,7 @@ export function LolRandomizerApp() {
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white flex items-center gap-2">
                   <History className="w-4 h-4 text-amber-400" />
-                  <span>Lịch Sử Mở Hòm Gần Đây (Bấm để khôi phục đội hình)</span>
+                  <span>Lịch Sử Mở Tướng Gần Đây (Bấm để khôi phục đội hình)</span>
                 </h2>
                 {history.length > 0 && (
                   <button
@@ -795,8 +788,8 @@ export function LolRandomizerApp() {
 
               {history.length === 0 ? (
                 <p className="text-xs text-slate-400 py-6 text-center">
-                  Hãy bấm <strong>&ldquo;🎰 Mở Hòm Cả 5 Đường&rdquo;</strong> để
-                  bắt đầu quay hòm và lưu lịch sử!
+                  Hãy bấm <strong>&ldquo;Mở Tướng Cả 5 Đường&rdquo;</strong> để
+                  bắt đầu quay tướng và lưu lịch sử!
                 </p>
               ) : (
                 <div className="scrollable-panel space-y-2 max-h-[210px] pr-1">

@@ -895,17 +895,17 @@ export function MatchAnalyzerApp() {
 
     return (
       <div
-        className={`rounded-xl bg-white border ${borderClass} overflow-hidden shadow-xs`}
+        className={`rounded-2xl bg-[#101524] border ${borderClass} overflow-hidden shadow-[0_12px_32px_rgba(0,0,0,0.45)]`}
       >
         <div
-          className={`px-3.5 sm:px-4 py-3 ${headerBgClass} border-b border-slate-200 flex flex-wrap items-center justify-between gap-2.5`}
+          className={`px-3.5 sm:px-4 py-3 ${headerBgClass} border-b border-[#1f2844] flex flex-wrap items-center justify-between gap-2.5`}
         >
           <div className="flex flex-wrap items-center gap-2">
             <span
               className={`px-2.5 py-0.5 rounded text-[11px] font-black uppercase tracking-wider ${
                 team.win
-                  ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                  : "bg-rose-100 text-rose-800 border border-rose-300"
+                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/40"
+                  : "bg-rose-500/15 text-rose-300 border border-rose-500/40"
               }`}
             >
               {team.win ? "CHIẾN THẮNG" : "THẤT BẠI"}
@@ -915,39 +915,39 @@ export function MatchAnalyzerApp() {
             >
               {teamLabel}
             </h3>
-            <span className="text-xs text-slate-600 font-medium">
+            <span className="text-xs text-slate-400 font-medium">
               • {team.totalKills} Hạ gục • {(team.totalGold / 1000).toFixed(1)}k
               Vàng
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-slate-700">
+          <div className="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-slate-300">
             {match.gameMode === "ARAM" ||
             match.queueName.toUpperCase().includes("ARAM") ? (
               <>
-                <span className="px-2 py-0.5 rounded bg-cyan-50 text-cyan-800 border border-cyan-300 font-bold">
+                <span className="px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 font-bold">
                   ❄️ Vực Gió Hú (ARAM)
                 </span>
-                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
-                  🗼 Trụ: <strong>{team.objectives.tower}</strong>
+                <span className="px-2 py-0.5 rounded bg-[#141b2e] border border-[#232d4b] text-slate-200">
+                  🗼 Trụ: <strong className="text-white">{team.objectives.tower}</strong>
                 </span>
-                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
-                  🏛️ Nhà lính: <strong>{team.objectives.inhibitor}</strong>
+                <span className="px-2 py-0.5 rounded bg-[#141b2e] border border-[#232d4b] text-slate-200">
+                  🏛️ Nhà lính: <strong className="text-white">{team.objectives.inhibitor}</strong>
                 </span>
               </>
             ) : (
               <>
-                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
-                  🐉 Rồng: <strong>{team.objectives.dragon}</strong>
+                <span className="px-2 py-0.5 rounded bg-[#141b2e] border border-[#232d4b] text-slate-200">
+                  🐉 Rồng: <strong className="text-white">{team.objectives.dragon}</strong>
                 </span>
-                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
-                  👾 Baron: <strong>{team.objectives.baron}</strong>
+                <span className="px-2 py-0.5 rounded bg-[#141b2e] border border-[#232d4b] text-slate-200">
+                  👾 Baron: <strong className="text-white">{team.objectives.baron}</strong>
                 </span>
-                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
-                  🪲 Sâu: <strong>{team.objectives.horde}</strong>
+                <span className="px-2 py-0.5 rounded bg-[#141b2e] border border-[#232d4b] text-slate-200">
+                  🪲 Sâu: <strong className="text-white">{team.objectives.horde}</strong>
                 </span>
-                <span className="px-2 py-0.5 rounded bg-white border border-slate-200">
-                  🗼 Trụ: <strong>{team.objectives.tower}</strong>
+                <span className="px-2 py-0.5 rounded bg-[#141b2e] border border-[#232d4b] text-slate-200">
+                  🗼 Trụ: <strong className="text-white">{team.objectives.tower}</strong>
                 </span>
               </>
             )}
@@ -955,7 +955,7 @@ export function MatchAnalyzerApp() {
         </div>
 
         {/* Column Header Bar on Desktop (md+) */}
-        <div className="hidden md:grid md:grid-cols-[minmax(220px,1.5fr)_minmax(115px,0.85fr)_minmax(150px,1fr)_minmax(110px,0.8fr)_minmax(110px,0.8fr)_224px] md:items-center md:gap-4 px-4 py-2 bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+        <div className="hidden md:grid md:grid-cols-[minmax(220px,1.5fr)_minmax(115px,0.85fr)_minmax(150px,1fr)_minmax(110px,0.8fr)_minmax(110px,0.8fr)_224px] md:items-center md:gap-4 px-4 py-2 bg-[#0b0e18] border-b border-[#1f2844] text-[11px] font-bold uppercase tracking-wider text-slate-400">
           <span>Người chơi &amp; Tướng (Bấm để xem AI)</span>
           <span>KDA / Tham gia</span>
           <span>Sát thương tướng</span>
@@ -964,7 +964,7 @@ export function MatchAnalyzerApp() {
           <span>Trang bị hoàn thành</span>
         </div>
 
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-[#1a223a]">
           {team.participants.map((p) => {
             const isFocused = p.puuid === focusedPuuid;
             const isTopPerformer = p.puuid === topPuuid;
@@ -978,17 +978,17 @@ export function MatchAnalyzerApp() {
                 onClick={() => handleSelectParticipantInDetail(p, true)}
                 className={`group p-3 sm:px-4 transition-colors cursor-pointer flex flex-col md:grid md:grid-cols-[minmax(220px,1.5fr)_minmax(115px,0.85fr)_minmax(150px,1fr)_minmax(110px,0.8fr)_minmax(110px,0.8fr)_224px] md:items-center gap-3 md:gap-4 ${
                   isFocused
-                    ? "bg-teal-50/90 border-l-4 border-l-teal-600"
-                    : "hover:bg-slate-50"
+                    ? "bg-amber-500/10 border-l-4 border-l-amber-400"
+                    : "hover:bg-[#151c30]"
                 }`}
               >
                 {/* Col 1: Role + Avatar + Name */}
                 <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                  <div className="w-7 h-7 rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 shrink-0">
+                  <div className="w-7 h-7 rounded bg-[#141b2e] border border-[#253052] flex items-center justify-center text-slate-300 shrink-0">
                     <RoleIcon role={p.role} className="w-4 h-4" />
                   </div>
 
-                  <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-lg overflow-hidden border border-slate-300 shrink-0 bg-slate-900">
+                  <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-lg overflow-hidden border border-[#2d3a62] shrink-0 bg-slate-900">
                     <img
                       src={getChampionSquareUrl(p.championId)}
                       alt={p.championName}
@@ -996,38 +996,38 @@ export function MatchAnalyzerApp() {
                       height={44}
                       className="w-full h-full object-cover"
                     />
-                    <span className="absolute bottom-0 right-0 px-1 text-[10px] font-bold bg-slate-900/90 text-white">
+                    <span className="absolute bottom-0 right-0 px-1 text-[10px] font-bold bg-slate-950/90 text-white">
                       {p.champLevel}
                     </span>
                   </div>
 
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="font-bold text-xs sm:text-sm text-slate-900 truncate group-hover:text-teal-700 transition-colors">
+                      <span className="font-bold text-xs sm:text-sm text-white truncate group-hover:text-amber-400 transition-colors">
                         {p.riotIdGameName}
                       </span>
-                      <span className="text-[11px] text-slate-500">
+                      <span className="text-[11px] text-slate-400">
                         #{p.riotIdTagline}
                       </span>
                       {isTopPerformer && (
                         <span
                           className={`px-1.5 py-0.2 rounded text-[10px] font-black uppercase ${
                             team.win
-                              ? "bg-amber-500 text-white"
-                              : "bg-purple-600 text-white"
+                              ? "bg-amber-500 text-slate-950"
+                              : "bg-purple-500 text-white"
                           }`}
                         >
                           {team.win ? "MVP" : "SVP"}
                         </span>
                       )}
                       {isFocused && (
-                        <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-teal-600 text-white">
+                        <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-cyan-500 text-slate-950">
                           Đang xem
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-slate-600 flex items-center gap-1.5">
-                      <span className="font-medium">{p.championName}</span>
+                    <div className="text-xs text-slate-400 flex items-center gap-1.5">
+                      <span className="font-medium text-slate-300">{p.championName}</span>
                       <span>•</span>
                       <span className="text-[11px] text-slate-500 truncate">
                         {p.primaryRune}
@@ -1037,15 +1037,15 @@ export function MatchAnalyzerApp() {
                 </div>
 
                 {/* Mobile 2x2 Grid / Desktop Columns 2..5 */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 md:contents gap-2.5 text-xs bg-slate-50/80 md:bg-transparent p-2.5 md:p-0 rounded-lg border border-slate-100 md:border-0">
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:contents gap-2.5 text-xs bg-[#0b0e18] md:bg-transparent p-2.5 md:p-0 rounded-lg border border-[#1f2844] md:border-0">
                   {/* Col 2: KDA */}
                   <div className="min-w-0">
-                    <div className="font-extrabold text-slate-900 text-xs sm:text-sm whitespace-nowrap">
+                    <div className="font-extrabold text-white text-xs sm:text-sm whitespace-nowrap">
                       {p.kills} /{" "}
-                      <span className="text-rose-600">{p.deaths}</span> /{" "}
+                      <span className="text-rose-400">{p.deaths}</span> /{" "}
                       {p.assists}
                     </div>
-                    <div className="text-[11px] text-slate-600 whitespace-nowrap">
+                    <div className="text-[11px] text-slate-400 whitespace-nowrap">
                       {p.kda} KDA • KP {p.killParticipation}%
                     </div>
                   </div>
@@ -1053,14 +1053,14 @@ export function MatchAnalyzerApp() {
                   {/* Col 3: Damage */}
                   <div className="min-w-0 pr-1">
                     <div className="flex items-center justify-between gap-2 text-[11px] mb-1">
-                      <span className="text-slate-900 font-bold">
+                      <span className="text-white font-bold">
                         {p.totalDamageDealtToChampions.toLocaleString()}
                       </span>
-                      <span className="text-slate-500 shrink-0">
+                      <span className="text-slate-400 shrink-0">
                         {p.damageShare}%
                       </span>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
+                    <div className="w-full h-2 rounded-full bg-[#1a223a] overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-amber-500 to-rose-500"
                         style={{ width: `${dmgPercent}%` }}
@@ -1070,22 +1070,22 @@ export function MatchAnalyzerApp() {
 
                   {/* Col 4: CS & Gold */}
                   <div className="min-w-0">
-                    <div className="font-bold text-slate-900 whitespace-nowrap">
+                    <div className="font-bold text-slate-200 whitespace-nowrap">
                       {p.cs} CS ({p.csPerMin}/p)
                     </div>
-                    <div className="text-[11px] text-amber-700 font-medium whitespace-nowrap">
+                    <div className="text-[11px] text-amber-400 font-medium whitespace-nowrap">
                       {(p.goldEarned / 1000).toFixed(1)}k vàng
                     </div>
                   </div>
 
                   {/* Col 5: Vision & OP Score */}
                   <div className="min-w-0">
-                    <div className="font-bold text-teal-700 whitespace-nowrap">
+                    <div className="font-bold text-cyan-400 whitespace-nowrap">
                       👁️ {p.visionScore} tầm nhìn
                     </div>
-                    <div className="text-[11px] text-slate-600 whitespace-nowrap">
+                    <div className="text-[11px] text-slate-400 whitespace-nowrap">
                       Điểm OP:{" "}
-                      <strong className="text-slate-900">{p.mvpScore}</strong>
+                      <strong className="text-white">{p.mvpScore}</strong>
                     </div>
                   </div>
                 </div>
@@ -1098,10 +1098,10 @@ export function MatchAnalyzerApp() {
                       return (
                         <div
                           key={idx}
-                          className={`w-7 h-7 rounded bg-slate-100 border ${
+                          className={`w-7 h-7 rounded bg-[#141b2e] border ${
                             idx === 6
                               ? "border-amber-400 rounded-full ml-1"
-                              : "border-slate-300"
+                              : "border-[#253052]"
                           } overflow-hidden flex items-center justify-center shrink-0`}
                         >
                           {iconUrl ? (
@@ -1114,13 +1114,13 @@ export function MatchAnalyzerApp() {
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#253052]" />
                           )}
                         </div>
                       );
                     })}
                   </div>
-                  <span className="md:hidden text-[11px] font-bold text-teal-700 shrink-0">
+                  <span className="md:hidden text-[11px] font-bold text-cyan-400 shrink-0">
                     Xem AI &darr;
                   </span>
                 </div>
@@ -1133,47 +1133,48 @@ export function MatchAnalyzerApp() {
   };
 
   return (
-    <div className="min-h-[calc(100dvh-4rem)] px-3 py-4 sm:px-6 sm:py-6 lg:px-10 max-w-[1440px] mx-auto">
+    <div className="min-h-[calc(100dvh-4rem)] bg-[#080b13] text-slate-100 px-3 py-4 sm:px-6 sm:py-6 lg:px-10">
+      <div className="max-w-[1440px] mx-auto">
       {/* Page Title & Search Bar */}
       <header className="mb-5 sm:mb-6 fluid-header-container">
-        <div className="pb-4 sm:pb-5 border-b border-slate-200">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-300 text-teal-800 text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-2">
-            <BrainCircuit className="w-3.5 h-3.5 text-teal-600" />
+        <div className="pb-4 sm:pb-5 border-b border-[#1f2844]">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[11px] sm:text-xs font-bold uppercase tracking-widest mb-2">
+            <BrainCircuit className="w-3.5 h-3.5 text-amber-400" />
             <span>Riot Match-V5 + AI Match Coach</span>
           </div>
-          <h1 className="fluid-hero-title font-black tracking-tight text-slate-900 uppercase">
+          <h1 className="fluid-hero-title font-black tracking-tight text-white uppercase">
             Phân Tích Trận Đấu LMHT{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-sky-600 to-amber-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-cyan-400">
               Bằng Trí Tuệ Nhân Tạo (AI)
             </span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-3xl">
-            <strong>Bước 1:</strong> Tìm kiếm{" "}
-            <strong className="text-slate-900">Riot ID (Tên#Tag)</strong> để lấy
-            danh sách các trận đấu gần nhất &rarr; <strong>Bước 2:</strong> Bấm
+          <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
+            <strong className="text-slate-200">Bước 1:</strong> Tìm kiếm{" "}
+            <strong className="text-amber-400">Riot ID (Tên#Tag)</strong> để lấy
+            danh sách các trận đấu gần nhất &rarr; <strong className="text-slate-200">Bước 2:</strong> Bấm
             chọn vào một trận đấu cụ thể để xem chi tiết 5v5 và phân tích bằng
             AI.
           </p>
         </div>
 
         {/* Search Input Bar */}
-        <div className="mt-4 sm:mt-5 p-3 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-sm">
+        <div className="mt-4 sm:mt-5 p-3 sm:p-4 rounded-2xl bg-[#101524] border border-[#1f2844] shadow-[0_12px_32px_rgba(0,0,0,0.45)]">
           <form
             onSubmit={handleSearchMatches}
             className="flex flex-col md:flex-row items-stretch md:items-center gap-2.5"
           >
             <div className="flex items-center gap-2">
-              <div className="inline-flex rounded-lg p-1 bg-slate-100 border border-slate-200 flex-1 sm:flex-initial">
+              <div className="inline-flex rounded-lg p-1 bg-[#0b0e18] border border-[#1f2844] flex-1 sm:flex-initial">
                 <button
                   type="button"
                   onClick={() => {
                     setSearchMode("RIOT_ID");
                     setQueryInput("Levi#VN2");
                   }}
-                  className={`flex-1 sm:flex-initial px-2.5 py-1.5 rounded text-xs font-bold uppercase cursor-pointer ${
+                  className={`flex-1 sm:flex-initial px-2.5 py-1.5 rounded text-xs font-bold uppercase cursor-pointer transition-colors ${
                     searchMode === "RIOT_ID"
-                      ? "bg-amber-500 text-white shadow-2xs"
-                      : "text-slate-600 hover:text-slate-900"
+                      ? "bg-amber-500 text-slate-950 shadow-2xs"
+                      : "text-slate-400 hover:text-white"
                   }`}
                 >
                   Riot ID
@@ -1184,10 +1185,10 @@ export function MatchAnalyzerApp() {
                     setSearchMode("MATCH_ID");
                     setQueryInput("VN2_489102341");
                   }}
-                  className={`flex-1 sm:flex-initial px-2.5 py-1.5 rounded text-xs font-bold uppercase cursor-pointer ${
+                  className={`flex-1 sm:flex-initial px-2.5 py-1.5 rounded text-xs font-bold uppercase cursor-pointer transition-colors ${
                     searchMode === "MATCH_ID"
-                      ? "bg-amber-500 text-white shadow-2xs"
-                      : "text-slate-600 hover:text-slate-900"
+                      ? "bg-amber-500 text-slate-950 shadow-2xs"
+                      : "text-slate-400 hover:text-white"
                   }`}
                 >
                   Match ID
@@ -1201,15 +1202,15 @@ export function MatchAnalyzerApp() {
                     setPlatform(e.target.value as RiotPlatformId)
                   }
                   aria-label="Chọn máy chủ Riot"
-                  className="appearance-none pl-3.5 pr-9 py-2.5 rounded-lg bg-slate-50 hover:bg-white border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-500/20 cursor-pointer transition-colors"
+                  className="appearance-none pl-3.5 pr-9 py-2.5 rounded-lg bg-[#0b0e18] hover:bg-[#141b2e] border border-[#253052] text-xs font-bold text-slate-200 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 cursor-pointer transition-colors"
                 >
                   {PLATFORMS.map((pf) => (
-                    <option key={pf.id} value={pf.id}>
+                    <option key={pf.id} value={pf.id} className="bg-[#101524] text-white">
                       {pf.label}
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               </div>
             </div>
 
@@ -1235,7 +1236,7 @@ export function MatchAnalyzerApp() {
                       ? "Gõ tên hoặc chọn gợi ý (VD: Levi#VN2, Hide on bush#KR1)..."
                       : "Nhập hoặc chọn Match ID (VD: VN2_489102341)..."
                   }
-                  className="w-full pl-3.5 pr-8 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-teal-600 focus:bg-white"
+                  className="w-full pl-3.5 pr-8 py-2.5 rounded-lg bg-[#0b0e18] border border-[#253052] text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 focus:bg-[#12182b]"
                 />
                 {queryInput && (
                   <button
@@ -1244,7 +1245,7 @@ export function MatchAnalyzerApp() {
                       setQueryInput("");
                       setIsDropdownOpen(true);
                     }}
-                    className="absolute right-2.5 text-slate-400 hover:text-slate-700 cursor-pointer"
+                    className="absolute right-2.5 text-slate-500 hover:text-slate-200 cursor-pointer"
                     title="Xóa nhanh"
                   >
                     <X className="w-4 h-4" />
@@ -1253,13 +1254,13 @@ export function MatchAnalyzerApp() {
               </div>
 
               {isDropdownOpen && autocompleteSuggestions.length > 0 && (
-                <div className="scrollable-panel absolute left-0 right-0 top-full mt-1.5 z-50 rounded-xl bg-white border border-slate-300 shadow-xl max-h-[320px]">
-                  <div className="px-3 py-1.5 bg-slate-100 border-b border-slate-200 flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-600">
+                <div className="scrollable-panel absolute left-0 right-0 top-full mt-1.5 z-50 rounded-xl bg-[#101524] border border-[#283354] shadow-2xl max-h-[320px]">
+                  <div className="px-3 py-1.5 bg-[#0b0e18] border-b border-[#1f2844] flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400">
                     <span>Gợi ý tự động (Bấm hoặc nhấn ↑↓ Enter)</span>
                     <span>{autocompleteSuggestions.length} kết quả</span>
                   </div>
 
-                  <ul className="divide-y divide-slate-100">
+                  <ul className="divide-y divide-[#1a223a]">
                     {autocompleteSuggestions.map((opt, idx) => {
                       const isActive = idx === activeIndex;
                       const [namePart, tagPart] = opt.riotId.split("#");
@@ -1270,8 +1271,8 @@ export function MatchAnalyzerApp() {
                           onMouseEnter={() => setActiveIndex(idx)}
                           className={`px-3.5 py-2.5 flex items-center justify-between gap-3 cursor-pointer transition-colors ${
                             isActive
-                              ? "bg-teal-50 text-slate-900"
-                              : "hover:bg-slate-50 text-slate-800"
+                              ? "bg-amber-500/15 text-white"
+                              : "hover:bg-[#161e33] text-slate-200"
                           }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
@@ -1281,33 +1282,33 @@ export function MatchAnalyzerApp() {
                                 alt={opt.championId}
                                 width={30}
                                 height={30}
-                                className="w-7 h-7 rounded-md border border-slate-300 object-cover shrink-0"
+                                className="w-7 h-7 rounded-md border border-[#2d3a62] object-cover shrink-0"
                               />
                             ) : opt.category === "RECENT" ? (
-                              <Clock className="w-4 h-4 text-teal-600 shrink-0" />
+                              <Clock className="w-4 h-4 text-cyan-400 shrink-0" />
                             ) : (
-                              <UserCheck className="w-4 h-4 text-amber-600 shrink-0" />
+                              <UserCheck className="w-4 h-4 text-amber-400 shrink-0" />
                             )}
 
                             <div className="min-w-0">
                               <div className="text-xs sm:text-sm font-bold truncate">
-                                <span className="text-slate-900">
+                                <span className="text-white">
                                   {namePart}
                                 </span>
                                 {tagPart && (
-                                  <span className="text-teal-600 font-mono ml-0.5">
+                                  <span className="text-amber-400 font-mono ml-0.5">
                                     #{tagPart}
                                   </span>
                                 )}
                               </div>
-                              <div className="text-[11px] text-slate-500 truncate">
+                              <div className="text-[11px] text-slate-400 truncate">
                                 {opt.subtitle}
                               </div>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-[10px] font-bold text-slate-700">
+                            <span className="px-2 py-0.5 rounded bg-[#141b2e] border border-[#253052] text-[10px] font-bold text-slate-300">
                               {opt.platform}
                             </span>
                             {opt.category === "RECENT" && (
@@ -1317,7 +1318,7 @@ export function MatchAnalyzerApp() {
                                   removeRecentSearch(opt.riotId, e)
                                 }
                                 title="Xóa khỏi lịch sử tìm kiếm"
-                                className="p-1 rounded hover:bg-rose-100 text-slate-400 hover:text-rose-600"
+                                className="p-1 rounded hover:bg-rose-500/20 text-slate-500 hover:text-rose-400"
                               >
                                 <X className="w-3.5 h-3.5" />
                               </button>
@@ -1334,7 +1335,7 @@ export function MatchAnalyzerApp() {
             <button
               type="submit"
               disabled={isFetchingMatch}
-              className="hextech-action-btn inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-black text-xs sm:text-sm uppercase tracking-wider bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-sm cursor-pointer shrink-0"
+              className="hextech-action-btn inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-black text-xs sm:text-sm uppercase tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 shadow-[0_0_20px_rgba(245,158,11,0.3)] cursor-pointer shrink-0"
             >
               <Search className="w-4 h-4" />
               <span>
@@ -1344,9 +1345,9 @@ export function MatchAnalyzerApp() {
           </form>
 
           {/* Queue Mode Filter Bar (ALL / ARAM / Ranked Solo / Ranked Flex) */}
-          <div className="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+          <div className="mt-3 pt-2.5 border-t border-[#1f2844] flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mr-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1">
                 Chế độ chơi:
               </span>
               {(
@@ -1368,11 +1369,11 @@ export function MatchAnalyzerApp() {
                     className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer border ${
                       isActive
                         ? isAramTab
-                          ? "bg-gradient-to-r from-cyan-600 to-sky-600 text-white border-cyan-700 shadow-xs"
-                          : "bg-teal-600 text-white border-teal-700 shadow-xs"
+                          ? "bg-gradient-to-r from-cyan-500 to-sky-500 text-slate-950 border-cyan-400 shadow-[0_0_14px_rgba(34,211,238,0.3)]"
+                          : "bg-amber-500 text-slate-950 border-amber-400 shadow-[0_0_14px_rgba(245,158,11,0.3)]"
                         : isAramTab
-                        ? "bg-cyan-50/70 text-cyan-800 border-cyan-200 hover:bg-cyan-100"
-                        : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        ? "bg-cyan-500/10 text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20"
+                        : "bg-[#141b2e] text-slate-300 border-[#232d4b] hover:bg-[#1a243d] hover:text-white"
                     }`}
                   >
                     {tab.label}
@@ -1380,22 +1381,22 @@ export function MatchAnalyzerApp() {
                 );
               })}
             </div>
-            <span className="text-[11px] text-slate-500">
-              Bấm <strong>❄️ Lịch Sử ARAM</strong> để lọc hoặc lấy 10 trận ARAM gần nhất từ Riot API
+            <span className="text-[11px] text-slate-400">
+              Bấm <strong className="text-cyan-400">❄️ Lịch Sử ARAM</strong> để lọc hoặc lấy 10 trận ARAM gần nhất từ Riot API
             </span>
           </div>
         </div>
 
         {/* Notices */}
         {fetchWarning && (
-          <div className="mt-3 p-3 rounded-lg bg-amber-50 border border-amber-300 text-xs text-amber-900 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+          <div className="mt-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/40 text-xs text-amber-200 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
             <span>{fetchWarning}</span>
           </div>
         )}
         {fetchError && (
-          <div className="mt-3 p-3 rounded-lg bg-rose-50 border border-rose-300 text-xs text-rose-900 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+          <div className="mt-3 p-3 rounded-lg bg-rose-500/10 border border-rose-500/40 text-xs text-rose-200 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
             <span>{fetchError}</span>
           </div>
         )}
@@ -1408,8 +1409,8 @@ export function MatchAnalyzerApp() {
         <section className="space-y-3.5 sm:space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <ListFilter className="w-5 h-5 text-teal-600" />
-              <h2 className="text-sm sm:text-lg font-black uppercase tracking-wider text-slate-900">
+              <ListFilter className="w-5 h-5 text-amber-400" />
+              <h2 className="text-sm sm:text-lg font-black uppercase tracking-wider text-white">
                 {queueFilter === "ARAM"
                   ? `Lịch Sử Đấu ARAM - Vực Gió Hú (${displayedMatches.length} trận)`
                   : queueFilter === "SOLO"
@@ -1419,7 +1420,7 @@ export function MatchAnalyzerApp() {
                   : `Danh Sách Trận Đấu Gần Nhất (${displayedMatches.length} trận)`}
               </h2>
             </div>
-            <span className="text-xs text-slate-600 font-medium">
+            <span className="text-xs text-slate-400 font-medium">
               👉 Bấm vào một trận đấu bất kỳ bên dưới để xem bảng điểm 5v5 &amp;
               kích hoạt AI phân tích
             </span>
@@ -1440,36 +1441,36 @@ export function MatchAnalyzerApp() {
                 <div
                   key={match.matchId}
                   onClick={() => handleOpenMatchDetail(match)}
-                  className={`champ-card group rounded-xl overflow-hidden border transition-all cursor-pointer flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-white shadow-xs hover:shadow-md ${
+                  className={`champ-card group rounded-2xl overflow-hidden border transition-all cursor-pointer flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5 sm:gap-4 p-3.5 sm:p-4 bg-[#101524] hover:bg-[#141b2e] shadow-[0_8px_24px_rgba(0,0,0,0.4)] ${
                     isWin
-                      ? "border-l-4 border-l-emerald-500 border-slate-200 hover:border-teal-500"
-                      : "border-l-4 border-l-rose-500 border-slate-200 hover:border-amber-500"
+                      ? "border-l-4 border-l-emerald-500 border-[#1f2844] hover:border-emerald-500/60"
+                      : "border-l-4 border-l-rose-500 border-[#1f2844] hover:border-rose-500/60"
                   }`}
                 >
                   {/* Left: Match Result + Queue + Duration */}
-                  <div className="flex sm:flex-row lg:flex-col justify-between gap-2 min-w-[165px] border-b lg:border-b-0 lg:border-r border-slate-200 pb-2.5 lg:pb-0 lg:pr-4">
+                  <div className="flex sm:flex-row lg:flex-col justify-between gap-2 min-w-[165px] border-b lg:border-b-0 lg:border-r border-[#1f2844] pb-2.5 lg:pb-0 lg:pr-4">
                     <div>
                       <div className="flex flex-wrap items-center gap-1.5 mb-1">
                         <span
                           className={`inline-block px-2.5 py-0.5 rounded text-xs font-black uppercase tracking-wider ${
                             isWin
-                              ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                              : "bg-rose-100 text-rose-800 border border-rose-300"
+                              ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/40"
+                              : "bg-rose-500/15 text-rose-300 border border-rose-500/40"
                           }`}
                         >
                           {isWin ? "CHIẾN THẮNG" : "THẤT BẠI"}
                         </span>
                         {isAramMatch && (
-                          <span className="inline-block px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-cyan-100 text-cyan-800 border border-cyan-300">
+                          <span className="inline-block px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-cyan-500/15 text-cyan-300 border border-cyan-500/40">
                             ❄️ ARAM
                           </span>
                         )}
                       </div>
-                      <div className="text-xs font-bold text-slate-800 line-clamp-1">
+                      <div className="text-xs font-bold text-slate-200 line-clamp-1">
                         {match.queueName}
                       </div>
                     </div>
-                    <div className="text-[11px] text-slate-500 flex items-center gap-1.5 shrink-0">
+                    <div className="text-[11px] text-slate-400 flex items-center gap-1.5 shrink-0">
                       <span>⏱️ {formatDuration(match.gameDurationSeconds)}</span>
                       <span>•</span>
                       <span>{formatTimeAgo(match.gameStartTimestamp)}</span>
@@ -1487,26 +1488,26 @@ export function MatchAnalyzerApp() {
                           height={56}
                           className="w-full h-full object-cover"
                         />
-                        <span className="absolute bottom-0 right-0 px-1.5 py-0.2 text-[10px] font-black bg-slate-900/90 text-white">
+                        <span className="absolute bottom-0 right-0 px-1.5 py-0.2 text-[10px] font-black bg-slate-950/90 text-white">
                           {primaryP.champLevel}
                         </span>
                       </div>
 
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-sm font-black text-slate-900">
+                          <span className="text-sm font-black text-white">
                             {primaryP.championName}
                           </span>
-                          <span className="px-1.5 py-0.2 rounded bg-teal-50 border border-teal-200 text-[10px] font-bold text-teal-700">
+                          <span className="px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-500/40 text-[10px] font-bold text-amber-300">
                             {primaryP.role}
                           </span>
                         </div>
-                        <div className="text-xs text-slate-600 font-medium">
+                        <div className="text-xs text-slate-300 font-medium">
                           {primaryP.riotIdGameName}#{primaryP.riotIdTagline}
                         </div>
-                        <div className="text-[11px] text-slate-500 mt-0.5">
+                        <div className="text-[11px] text-slate-400 mt-0.5">
                           Điểm OP:{" "}
-                          <strong className="text-slate-900">
+                          <strong className="text-white">
                             {primaryP.mvpScore}
                           </strong>
                         </div>
@@ -1515,15 +1516,15 @@ export function MatchAnalyzerApp() {
 
                     {/* KDA & Stats */}
                     <div className="min-w-[130px]">
-                      <div className="text-sm sm:text-base font-black text-slate-900">
+                      <div className="text-sm sm:text-base font-black text-white">
                         {primaryP.kills} /{" "}
-                        <span className="text-rose-600">{primaryP.deaths}</span>{" "}
+                        <span className="text-rose-400">{primaryP.deaths}</span>{" "}
                         / {primaryP.assists}
                       </div>
-                      <div className="text-xs text-teal-700 font-bold">
+                      <div className="text-xs text-cyan-400 font-bold">
                         {primaryP.kda} KDA • KP {primaryP.killParticipation}%
                       </div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-[11px] text-slate-400">
                         {primaryP.cs} CS ({primaryP.csPerMin}/p) •{" "}
                         {(primaryP.goldEarned / 1000).toFixed(1)}k vàng
                       </div>
@@ -1536,10 +1537,10 @@ export function MatchAnalyzerApp() {
                         return (
                           <div
                             key={idx}
-                            className={`w-6 h-6 sm:w-7 sm:h-7 rounded bg-slate-100 border ${
+                            className={`w-6 h-6 sm:w-7 sm:h-7 rounded bg-[#141b2e] border ${
                               idx === 6
                                 ? "border-amber-400 rounded-full ml-1"
-                                : "border-slate-300"
+                                : "border-[#253052]"
                             } overflow-hidden flex items-center justify-center`}
                           >
                             {iconUrl ? (
@@ -1552,7 +1553,7 @@ export function MatchAnalyzerApp() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#253052]" />
                             )}
                           </div>
                         );
@@ -1561,7 +1562,7 @@ export function MatchAnalyzerApp() {
                   </div>
 
                   {/* Middle-Right: Mini 10-player roster preview */}
-                  <div className="hidden xl:grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] min-w-[250px] border-l border-slate-200 pl-4">
+                  <div className="hidden xl:grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] min-w-[250px] border-l border-[#1f2844] pl-4">
                     <div className="space-y-1">
                       {match.blueTeam.participants.map((bp) => (
                         <div
@@ -1576,7 +1577,7 @@ export function MatchAnalyzerApp() {
                             loading="lazy"
                             className="w-4 h-4 rounded-xs object-cover shrink-0"
                           />
-                          <span className="truncate text-sky-800 font-medium">
+                          <span className="truncate text-sky-400 font-medium">
                             {bp.riotIdGameName}
                           </span>
                         </div>
@@ -1596,7 +1597,7 @@ export function MatchAnalyzerApp() {
                             loading="lazy"
                             className="w-4 h-4 rounded-xs object-cover shrink-0"
                           />
-                          <span className="truncate text-rose-800 font-medium">
+                          <span className="truncate text-rose-400 font-medium">
                             {rp.riotIdGameName}
                           </span>
                         </div>
@@ -1605,8 +1606,8 @@ export function MatchAnalyzerApp() {
                   </div>
 
                   {/* Right CTA: View Detail & AI Analysis */}
-                  <div className="flex items-center justify-end shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
-                    <span className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-black uppercase tracking-wider bg-teal-600 text-white group-hover:bg-teal-700 transition-colors shadow-xs">
+                  <div className="flex items-center justify-end shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-[#1f2844]">
+                    <span className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 group-hover:from-amber-400 group-hover:to-orange-400 transition-all shadow-[0_0_16px_rgba(245,158,11,0.25)]">
                       <BrainCircuit className="w-4 h-4" />
                       <span>Chi Tiết &amp; Phân Tích AI</span>
                       <ChevronRight className="w-4 h-4" />
@@ -1637,7 +1638,7 @@ export function MatchAnalyzerApp() {
                   mode: searchMode,
                 });
               }}
-              className="hextech-action-btn inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider bg-white text-teal-700 border border-teal-400 hover:bg-teal-50 shadow-2xs cursor-pointer"
+              className="hextech-action-btn inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-black uppercase tracking-wider bg-[#141b2e] text-amber-400 border border-amber-500/40 hover:bg-[#1b2540] shadow-xs cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>
@@ -1646,7 +1647,7 @@ export function MatchAnalyzerApp() {
             </button>
 
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-              <span className="text-xs font-bold text-slate-600 shrink-0">
+              <span className="text-xs font-bold text-slate-400 shrink-0">
                 Chuyển nhanh:
               </span>
               {matches.map((m) => (
@@ -1654,10 +1655,10 @@ export function MatchAnalyzerApp() {
                   key={m.matchId}
                   type="button"
                   onClick={() => handleOpenMatchDetail(m)}
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border shrink-0 cursor-pointer ${
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border shrink-0 cursor-pointer transition-colors ${
                     selectedMatch.matchId === m.matchId
-                      ? "bg-teal-600 text-white border-teal-600"
-                      : "bg-white text-slate-600 border-slate-200 hover:text-slate-900"
+                      ? "bg-amber-500 text-slate-950 border-amber-400"
+                      : "bg-[#101524] text-slate-300 border-[#232d4b] hover:bg-[#161e33] hover:text-white"
                   }`}
                 >
                   {m.matchId}
@@ -1668,12 +1669,12 @@ export function MatchAnalyzerApp() {
 
           {/* Copy Image Status Notice */}
           {copyStatusText && (
-            <div className="mb-4 p-3 rounded-xl bg-teal-50 border border-teal-300 text-xs sm:text-sm font-bold text-teal-900 flex items-center justify-between gap-2 shadow-2xs">
+            <div className="mb-4 p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-xs sm:text-sm font-bold text-emerald-300 flex items-center justify-between gap-2 shadow-2xs">
               <span>{copyStatusText}</span>
               <button
                 type="button"
                 onClick={() => setCopyStatusText(null)}
-                className="p-1 rounded hover:bg-teal-100 text-teal-700 cursor-pointer"
+                className="p-1 rounded hover:bg-emerald-500/20 text-emerald-300 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1683,22 +1684,22 @@ export function MatchAnalyzerApp() {
           {/* Capturable Match Detail Container */}
           <div ref={matchDetailCaptureRef}>
             {/* Match Banner Summary */}
-            <div className="mb-5 sm:mb-6 p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+            <div className="mb-5 sm:mb-6 p-3.5 sm:p-4 rounded-2xl bg-[#101524] border border-[#1f2844] shadow-[0_12px_32px_rgba(0,0,0,0.45)] flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
               <div className="flex items-center gap-3">
-                <div className="px-3 py-1 rounded bg-teal-50 border border-teal-200 text-xs font-mono font-bold text-teal-800">
+                <div className="px-3 py-1 rounded bg-amber-500/15 border border-amber-500/40 text-xs font-mono font-bold text-amber-300">
                   #{selectedMatch.matchId}
                 </div>
                 <div>
-                  <h2 className="text-sm sm:text-base font-black text-slate-900">
+                  <h2 className="text-sm sm:text-base font-black text-white">
                     {selectedMatch.queueName}
                   </h2>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-slate-400">
                     Thời lượng:{" "}
-                    <strong className="text-slate-900">
+                    <strong className="text-white">
                       {formatDuration(selectedMatch.gameDurationSeconds)}
                     </strong>{" "}
                     • Phiên bản:{" "}
-                    <strong className="text-slate-900">
+                    <strong className="text-white">
                       {selectedMatch.gameVersion}
                     </strong>
                   </p>
@@ -1720,7 +1721,7 @@ export function MatchAnalyzerApp() {
                     )
                   }
                   disabled={copyingTargetId !== null}
-                  className="hextech-action-btn inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-amber-500 hover:bg-amber-600 text-white shadow-xs cursor-pointer"
+                  className="hextech-action-btn inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-xs cursor-pointer"
                 >
                   {copyingTargetId === "FULL_PAGE" ? (
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -1750,7 +1751,7 @@ export function MatchAnalyzerApp() {
                   }
                   disabled={copyingTargetId !== null}
                   title="Tải ảnh PNG toàn trang về máy"
-                  className="hextech-action-btn inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 cursor-pointer"
+                  className="hextech-action-btn inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold bg-[#141b2e] hover:bg-[#1c2640] text-slate-200 border border-[#283354] cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Tải PNG</span>
@@ -1765,7 +1766,7 @@ export function MatchAnalyzerApp() {
                     })
                   }
                   disabled={isAnalyzing}
-                  className="hextech-action-btn inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-teal-600 hover:bg-teal-700 text-white shadow-xs cursor-pointer"
+                  className="hextech-action-btn inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-xs cursor-pointer"
                 >
                   <RefreshCw
                     className={`w-3.5 h-3.5 ${
@@ -1802,34 +1803,34 @@ export function MatchAnalyzerApp() {
                       selectedMatch,
                       selectedMatch.blueTeam,
                       "Đội Xanh (Blue Team)",
-                      "text-sky-700",
-                      "border-sky-200",
-                      "bg-sky-50/70",
+                      "text-sky-400",
+                      "border-sky-500/30",
+                      "bg-sky-500/10",
                       maxDmg
                     )}
                     {renderTeamTable(
                       selectedMatch,
                       selectedMatch.redTeam,
                       "Đội Đỏ (Red Team)",
-                      "text-rose-700",
-                      "border-rose-200",
-                      "bg-rose-50/70",
+                      "text-rose-400",
+                      "border-rose-500/30",
+                      "bg-rose-500/10",
                       maxDmg
                     )}
                   </div>
 
                   {/* Bottom Full-Width Section: AI Match Analysis Report (Scroll target when clicking a champion) */}
                   <div ref={aiEvaluationRef} className="scroll-mt-20">
-                    <section className="p-4 sm:p-6 rounded-xl bg-white border-2 border-teal-500/40 shadow-md">
-                      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-5 border-b border-slate-200">
+                    <section className="p-4 sm:p-6 rounded-2xl bg-[#101524] border-2 border-amber-500/40 shadow-[0_14px_36px_rgba(0,0,0,0.5)]">
+                      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-5 border-b border-[#1f2844]">
                         <div className="flex flex-wrap items-center gap-2">
-                          <BrainCircuit className="w-5 h-5 text-teal-600" />
-                          <h2 className="text-sm sm:text-lg font-black uppercase tracking-wider text-slate-900">
+                          <BrainCircuit className="w-5 h-5 text-amber-400" />
+                          <h2 className="text-sm sm:text-lg font-black uppercase tracking-wider text-white">
                             Báo Cáo Phân Tích Từ AI Coach (Toàn Trận &amp; Cả 10
                             Người Chơi)
                           </h2>
                           {analysis?.usedEndpoint && (
-                            <span className="px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-[11px] font-bold text-teal-800">
+                            <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-[11px] font-bold text-amber-300">
                               ⚡ {analysis.usedEndpoint}
                             </span>
                           )}
@@ -1839,7 +1840,7 @@ export function MatchAnalyzerApp() {
                           className="flex flex-wrap items-center gap-2"
                         >
                           {isAnalyzing && (
-                            <span className="text-xs font-bold text-teal-600 animate-pulse">
+                            <span className="text-xs font-bold text-cyan-400 animate-pulse">
                               Đang phân tích cả 10 thành viên...
                             </span>
                           )}
@@ -1855,14 +1856,14 @@ export function MatchAnalyzerApp() {
                                 )
                               }
                               disabled={copyingTargetId !== null}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-300 cursor-pointer transition-colors"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#141b2e] hover:bg-[#1c2640] text-amber-300 border border-amber-500/40 cursor-pointer transition-colors"
                             >
                               {copyingTargetId === "AI_SECTION" ? (
                                 <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                               ) : copiedTargetId === "AI_SECTION" ? (
-                                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                <Check className="w-3.5 h-3.5 text-emerald-400" />
                               ) : (
-                                <Camera className="w-3.5 h-3.5 text-teal-700" />
+                                <Camera className="w-3.5 h-3.5 text-amber-400" />
                               )}
                               <span>
                                 {copyingTargetId === "AI_SECTION"
@@ -1878,17 +1879,17 @@ export function MatchAnalyzerApp() {
 
                     {isAnalyzing && !analysis ? (
                       <div className="py-12 text-center space-y-3">
-                        <RefreshCw className="w-8 h-8 text-teal-600 animate-spin mx-auto" />
-                        <p className="text-sm font-bold text-slate-800">
+                        <RefreshCw className="w-8 h-8 text-amber-400 animate-spin mx-auto" />
+                        <p className="text-sm font-bold text-slate-200">
                           AI Coach đang tổng hợp dữ liệu và đánh giá chi tiết cả{" "}
-                          <span className="text-teal-700">
+                          <span className="text-amber-400">
                             10 thành viên (Đội Xanh &amp; Đội Đỏ)
                           </span>
                           ...
                         </p>
                       </div>
                     ) : analysisError ? (
-                      <div className="p-4 rounded-lg bg-rose-50 border border-rose-300 text-xs text-rose-900">
+                      <div className="p-4 rounded-lg bg-rose-500/15 border border-rose-500/40 text-xs text-rose-200">
                         {analysisError}
                       </div>
                     ) : analysis ? (
@@ -1900,64 +1901,64 @@ export function MatchAnalyzerApp() {
                         {/* Part 1: Match Overview + MVP/SVP + 5-Lane Comparisons + Macro */}
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
                           <div className="lg:col-span-6 space-y-4">
-                            <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                              <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-slate-700">
-                                <Sparkles className="w-4 h-4 text-teal-600" />
+                            <div className="p-3.5 sm:p-4 rounded-xl bg-[#141b2e] border border-[#232d4b] space-y-2">
+                              <div className="flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-amber-400">
+                                <Sparkles className="w-4 h-4 text-amber-400" />
                                 <span>
                                   Tổng Quan Cục Diện &amp; Điều Kiện Thắng
                                 </span>
                               </div>
-                              <p className="text-slate-800 leading-relaxed">
+                              <p className="text-slate-200 leading-relaxed">
                                 {analysis.overview}
                               </p>
-                              <p className="text-xs text-teal-800 pt-1.5 border-t border-slate-200">
-                                <strong>Điểm bước ngoặt:</strong>{" "}
+                              <p className="text-xs text-cyan-300 pt-1.5 border-t border-[#232d4b]">
+                                <strong className="text-cyan-400">Điểm bước ngoặt:</strong>{" "}
                                 {analysis.winConditionSummary}
                               </p>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200">
-                                <div className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-800 mb-1">
-                                  <Trophy className="w-4 h-4 text-amber-600" />
+                              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/35">
+                                <div className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-400 mb-1">
+                                  <Trophy className="w-4 h-4 text-amber-400" />
                                   <span>
                                     MVP Trận Đấu ({analysis.mvpPlayer.role})
                                   </span>
                                 </div>
-                                <div className="font-bold text-slate-900">
+                                <div className="font-bold text-white">
                                   {analysis.mvpPlayer.champion} —{" "}
                                   {analysis.mvpPlayer.name}
                                 </div>
-                                <p className="text-xs text-slate-600 mt-1">
+                                <p className="text-xs text-slate-300 mt-1">
                                   {analysis.mvpPlayer.reason}
                                 </p>
                               </div>
 
-                              <div className="p-3 rounded-xl bg-purple-50/80 border border-purple-200">
-                                <div className="flex items-center gap-1.5 text-xs font-black uppercase text-purple-800 mb-1">
-                                  <Award className="w-4 h-4 text-purple-600" />
+                              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/35">
+                                <div className="flex items-center gap-1.5 text-xs font-black uppercase text-purple-300 mb-1">
+                                  <Award className="w-4 h-4 text-purple-400" />
                                   <span>
                                     SVP Đội Thua ({analysis.svpPlayer.role})
                                   </span>
                                 </div>
-                                <div className="font-bold text-slate-900">
+                                <div className="font-bold text-white">
                                   {analysis.svpPlayer.champion} —{" "}
                                   {analysis.svpPlayer.name}
                                 </div>
-                                <p className="text-xs text-slate-600 mt-1">
+                                <p className="text-xs text-slate-300 mt-1">
                                   {analysis.svpPlayer.reason}
                                 </p>
                               </div>
                             </div>
 
-                            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                                <Flame className="w-4 h-4 text-amber-600" />
+                            <div className="p-3.5 rounded-xl bg-[#141b2e] border border-[#232d4b] space-y-1.5">
+                              <h3 className="text-xs font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                                <Flame className="w-4 h-4 text-amber-400" />
                                 <span>
                                   Đánh Giá Macro &amp; Kiểm Soát Bản Đồ
                                 </span>
                               </h3>
-                              <ul className="space-y-1 text-xs text-slate-700 list-disc list-inside">
+                              <ul className="space-y-1 text-xs text-slate-300 list-disc list-inside">
                                 {analysis.macroInsights.map((m, i) => (
                                   <li key={i}>{m}</li>
                                 ))}
@@ -1966,8 +1967,8 @@ export function MatchAnalyzerApp() {
                           </div>
 
                           <div className="lg:col-span-6 space-y-2">
-                            <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                              <Swords className="w-4 h-4 text-teal-600" />
+                            <h3 className="text-xs font-extrabold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+                              <Swords className="w-4 h-4 text-cyan-400" />
                               <span>
                                 So Sánh Đối Đầu 5 Đường (TOP / JG / MID / AD /
                                 SP)
@@ -1977,13 +1978,13 @@ export function MatchAnalyzerApp() {
                               {analysis.laneComparisons.map((lc) => (
                                 <div
                                   key={lc.role}
-                                  className="p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs"
+                                  className="p-2.5 sm:p-3 rounded-xl bg-[#141b2e] border border-[#232d4b] text-xs"
                                 >
                                   <div className="flex flex-wrap items-center justify-between gap-1 mb-1">
-                                    <span className="font-black text-slate-800 flex items-center gap-1.5">
+                                    <span className="font-black text-white flex items-center gap-1.5">
                                       <RoleIcon
                                         role={lc.role}
-                                        className="w-3.5 h-3.5 text-slate-700"
+                                        className="w-3.5 h-3.5 text-amber-400"
                                       />
                                       <span>
                                         {lc.role}: {lc.blueChampion} vs{" "}
@@ -1993,10 +1994,10 @@ export function MatchAnalyzerApp() {
                                     <span
                                       className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                                         lc.winnerTeam === 100
-                                          ? "bg-sky-100 text-sky-800 border border-sky-200"
+                                          ? "bg-sky-500/15 text-sky-300 border border-sky-500/40"
                                           : lc.winnerTeam === 200
-                                          ? "bg-rose-100 text-rose-800 border border-rose-200"
-                                          : "bg-slate-200 text-slate-700"
+                                          ? "bg-rose-500/15 text-rose-300 border border-rose-500/40"
+                                          : "bg-[#1e2742] text-slate-300"
                                       }`}
                                     >
                                       {lc.winnerTeam === 100
@@ -2006,7 +2007,7 @@ export function MatchAnalyzerApp() {
                                         : "Cân Bằng"}
                                     </span>
                                   </div>
-                                  <p className="text-slate-700">{lc.verdict}</p>
+                                  <p className="text-slate-300">{lc.verdict}</p>
                                 </div>
                               ))}
                             </div>
@@ -2014,14 +2015,14 @@ export function MatchAnalyzerApp() {
                         </div>
 
                         {/* Part 2: Head-to-Head Same-Lane Comparisons & All 10 Players Detailed AI Evaluations */}
-                        <div className="pt-5 border-t border-slate-200 space-y-4">
+                        <div className="pt-5 border-t border-[#1f2844] space-y-4">
                           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
                             <div>
-                              <h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-slate-900">
+                              <h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-white">
                                 ⚔️ So Sánh Đối Đầu Cùng Đường &amp; Đánh Giá Cả
                                 10 Thành Viên
                               </h3>
-                              <p className="text-xs text-slate-600 mt-0.5">
+                              <p className="text-xs text-slate-400 mt-0.5">
                                 Đặt 2 người chơi cùng 1 đường (Đội Xanh bên trái
                                 vs Đội Đỏ bên phải) đối diện nhau kèm thanh so
                                 sánh chỉ số &amp; đánh giá AI!
@@ -2029,14 +2030,14 @@ export function MatchAnalyzerApp() {
                             </div>
 
                             {/* Lane & Team Filter Tabs */}
-                            <div className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-slate-100 border border-slate-200 self-start xl:self-auto">
+                            <div className="flex flex-wrap items-center gap-1 p-1 rounded-xl bg-[#0b0e18] border border-[#1f2844] self-start xl:self-auto">
                               <button
                                 type="button"
                                 onClick={() => setReviewTeamFilter("LANE_VS")}
                                 className={`px-2.5 py-1.5 rounded-lg text-xs font-black cursor-pointer transition-colors ${
                                   reviewTeamFilter === "LANE_VS"
-                                    ? "bg-teal-600 text-white shadow-2xs"
-                                    : "text-slate-700 hover:text-slate-900"
+                                    ? "bg-amber-500 text-slate-950 shadow-2xs"
+                                    : "text-slate-300 hover:text-white"
                                 }`}
                               >
                                 ⚔️ Cả 5 Đường (10)
@@ -2056,21 +2057,21 @@ export function MatchAnalyzerApp() {
                                   onClick={() => setReviewTeamFilter(tab.id)}
                                   className={`px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
                                     reviewTeamFilter === tab.id
-                                      ? "bg-amber-500 text-white shadow-2xs"
-                                      : "text-slate-700 hover:bg-white"
+                                      ? "bg-cyan-500 text-slate-950 shadow-2xs"
+                                      : "text-slate-300 hover:bg-[#141b2e] hover:text-white"
                                   }`}
                                 >
                                   {tab.label}
                                 </button>
                               ))}
-                              <span className="h-4 w-px bg-slate-300 mx-0.5 hidden sm:inline-block" />
+                              <span className="h-4 w-px bg-[#253052] mx-0.5 hidden sm:inline-block" />
                               <button
                                 type="button"
                                 onClick={() => setReviewTeamFilter("BLUE")}
                                 className={`px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
                                   reviewTeamFilter === "BLUE"
-                                    ? "bg-sky-600 text-white shadow-2xs"
-                                    : "text-sky-800 hover:bg-white"
+                                    ? "bg-sky-500 text-slate-950 shadow-2xs"
+                                    : "text-sky-400 hover:bg-[#141b2e]"
                                 }`}
                               >
                                 Đội Xanh (5)
@@ -2080,8 +2081,8 @@ export function MatchAnalyzerApp() {
                                 onClick={() => setReviewTeamFilter("RED")}
                                 className={`px-2.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
                                   reviewTeamFilter === "RED"
-                                    ? "bg-rose-600 text-white shadow-2xs"
-                                    : "text-rose-800 hover:bg-white"
+                                    ? "bg-rose-500 text-white shadow-2xs"
+                                    : "text-rose-400 hover:bg-[#141b2e]"
                                 }`}
                               >
                                 Đội Đỏ (5)
@@ -2090,8 +2091,8 @@ export function MatchAnalyzerApp() {
                           </div>
 
                           {/* Quick 10-Player Jump Bar */}
-                          <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-200">
-                            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+                          <div className="p-2.5 sm:p-3 rounded-xl bg-[#141b2e] border border-[#232d4b]">
+                            <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
                               ⚡ Bấm nhanh để cuộn tới thẻ đánh giá của thành
                               viên:
                             </span>
@@ -2111,10 +2112,10 @@ export function MatchAnalyzerApp() {
                                     title={`${member.riotIdGameName}#${member.riotIdTagline} (${member.championName} - ${member.role})`}
                                     className={`flex items-center gap-1.5 p-1.5 rounded-lg border text-left transition-all cursor-pointer ${
                                       isCurrent
-                                        ? "bg-teal-600 border-teal-600 text-white shadow-xs"
+                                        ? "bg-amber-500 border-amber-400 text-slate-950 shadow-xs"
                                         : member.teamId === 100
-                                        ? "bg-sky-50/80 border-sky-200 text-slate-800 hover:border-sky-400"
-                                        : "bg-rose-50/80 border-rose-200 text-slate-800 hover:border-rose-400"
+                                        ? "bg-sky-500/10 border-sky-500/30 text-slate-200 hover:border-sky-400"
+                                        : "bg-rose-500/10 border-rose-500/30 text-slate-200 hover:border-rose-400"
                                     }`}
                                   >
                                     <img
@@ -2176,17 +2177,17 @@ export function MatchAnalyzerApp() {
                                   onClick={() => setFocusedPuuid(revPuuid)}
                                   className={`scroll-mt-24 p-4 sm:p-5 rounded-xl border transition-all flex flex-col justify-between space-y-3.5 h-full ${
                                     isSelected
-                                      ? "bg-gradient-to-b from-teal-50/90 to-white border-2 border-teal-500 ring-2 ring-teal-500/20 shadow-md"
+                                      ? "bg-gradient-to-b from-[#1a243d] to-[#111728] border-2 border-amber-400 ring-2 ring-amber-500/20 shadow-[0_0_24px_rgba(245,158,11,0.18)]"
                                       : isBlue
-                                      ? "bg-gradient-to-b from-sky-50/40 to-white border-sky-200 hover:border-sky-400 shadow-xs"
-                                      : "bg-gradient-to-b from-rose-50/40 to-white border-rose-200 hover:border-rose-400 shadow-xs"
+                                      ? "bg-gradient-to-b from-sky-950/30 to-[#111728] border-sky-500/30 hover:border-sky-400/70 shadow-xs"
+                                      : "bg-gradient-to-b from-rose-950/30 to-[#111728] border-rose-500/30 hover:border-rose-400/70 shadow-xs"
                                   }`}
                                 >
                                   <div className="space-y-3.5">
                                     {/* Card Header: Avatar + Name + Team/Role + AI Grade */}
-                                    <div className="flex items-start justify-between gap-2.5 pb-3 border-b border-slate-200">
+                                    <div className="flex items-start justify-between gap-2.5 pb-3 border-b border-[#1f2844]">
                                       <div className="flex items-center gap-3 min-w-0">
-                                        <div className="relative w-12 h-12 rounded-xl overflow-hidden border-2 border-slate-300 shrink-0 bg-slate-900">
+                                        <div className="relative w-12 h-12 rounded-xl overflow-hidden border-2 border-[#2d3a62] shrink-0 bg-slate-900">
                                           <img
                                             src={getChampionSquareUrl(champId)}
                                             alt={rev.champion}
@@ -2194,7 +2195,7 @@ export function MatchAnalyzerApp() {
                                             height={48}
                                             className="w-full h-full object-cover"
                                           />
-                                          <span className="absolute bottom-0 right-0 px-1 py-0.2 text-[9px] font-black bg-slate-900/90 text-white">
+                                          <span className="absolute bottom-0 right-0 px-1 py-0.2 text-[9px] font-black bg-slate-950/90 text-white">
                                             {rev.role}
                                           </span>
                                         </div>
@@ -2204,8 +2205,8 @@ export function MatchAnalyzerApp() {
                                             <span
                                               className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
                                                 isBlue
-                                                  ? "bg-sky-100 text-sky-800 border border-sky-300"
-                                                  : "bg-rose-100 text-rose-800 border border-rose-300"
+                                                  ? "bg-sky-500/15 text-sky-300 border border-sky-500/40"
+                                                  : "bg-rose-500/15 text-rose-300 border border-rose-500/40"
                                               }`}
                                             >
                                               {isBlue ? "Đội Xanh" : "Đội Đỏ"}
@@ -2213,29 +2214,29 @@ export function MatchAnalyzerApp() {
                                             <span
                                               className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                                                 rev.win
-                                                  ? "bg-emerald-100 text-emerald-800"
-                                                  : "bg-slate-200 text-slate-700"
+                                                  ? "bg-emerald-500/15 text-emerald-300"
+                                                  : "bg-[#1e2742] text-slate-300"
                                               }`}
                                             >
                                               {rev.win ? "Thắng" : "Thua"}
                                             </span>
                                             {isSelected && (
-                                              <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-teal-600 text-white">
+                                              <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-500 text-slate-950">
                                                 Đang chọn
                                               </span>
                                             )}
                                           </div>
 
-                                          <h4 className="text-sm sm:text-base font-black text-slate-900 truncate">
+                                          <h4 className="text-sm sm:text-base font-black text-white truncate">
                                             {rev.playerName}
                                           </h4>
 
-                                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 mt-0.5">
-                                            <span className="font-bold text-slate-800">
+                                          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 mt-0.5">
+                                            <span className="font-bold text-slate-200">
                                               {rev.champion} ({rev.role})
                                             </span>
                                             <span>•</span>
-                                            <span className="font-bold text-teal-700">
+                                            <span className="font-bold text-cyan-400">
                                               {rev.kdaText ||
                                                 (participantStat
                                                   ? `${participantStat.kills}/${participantStat.deaths}/${participantStat.assists} (${participantStat.kda} KDA)`
@@ -2244,9 +2245,9 @@ export function MatchAnalyzerApp() {
                                             {participantStat && (
                                               <>
                                                 <span>•</span>
-                                                <span>
+                                                <span className="text-slate-300">
                                                   ST:{" "}
-                                                  <strong>
+                                                  <strong className="text-white">
                                                     {participantStat.totalDamageDealtToChampions.toLocaleString()}
                                                   </strong>
                                                 </span>
@@ -2275,16 +2276,16 @@ export function MatchAnalyzerApp() {
                                           }}
                                           disabled={copyingTargetId !== null}
                                           title="Copy ảnh thẻ đánh giá của thành viên này"
-                                          className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-teal-50 border border-slate-300 hover:border-teal-400 text-[11px] font-bold text-slate-700 hover:text-teal-800 inline-flex items-center gap-1 cursor-pointer transition-colors"
+                                          className="px-2.5 py-1.5 rounded-lg bg-[#141b2e] hover:bg-[#1c2640] border border-[#283354] hover:border-amber-500/50 text-[11px] font-bold text-slate-200 hover:text-amber-300 inline-flex items-center gap-1 cursor-pointer transition-colors"
                                         >
                                           {copyingTargetId ===
                                           `CARD_${revPuuid}` ? (
-                                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-teal-600" />
+                                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-amber-400" />
                                           ) : copiedTargetId ===
                                             `CARD_${revPuuid}` ? (
-                                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                            <Check className="w-3.5 h-3.5 text-emerald-400" />
                                           ) : (
-                                            <Camera className="w-3.5 h-3.5 text-teal-700" />
+                                            <Camera className="w-3.5 h-3.5 text-amber-400" />
                                           )}
                                           <span className="hidden sm:inline">
                                             {copiedTargetId ===
@@ -2294,11 +2295,11 @@ export function MatchAnalyzerApp() {
                                           </span>
                                         </button>
 
-                                        <div className="text-center px-3 py-1 rounded-lg bg-teal-50 border border-teal-300 shrink-0">
-                                          <span className="block text-[10px] font-bold uppercase text-teal-700">
+                                        <div className="text-center px-3 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 shrink-0">
+                                          <span className="block text-[10px] font-bold uppercase text-amber-300">
                                             Hạng AI
                                           </span>
-                                          <span className="text-base sm:text-lg font-black text-teal-900">
+                                          <span className="text-base sm:text-lg font-black text-amber-400">
                                             {rev.grade}
                                           </span>
                                         </div>
@@ -2307,23 +2308,23 @@ export function MatchAnalyzerApp() {
 
                                     {/* Opening Summary */}
                                     {rev.summary && (
-                                      <p className="text-xs sm:text-[13px] text-slate-800 leading-relaxed bg-white p-3 rounded-lg border border-slate-200">
+                                      <p className="text-xs sm:text-[13px] text-slate-200 leading-relaxed bg-[#0b0e18] p-3 rounded-lg border border-[#1f2844]">
                                         {rev.summary}
                                       </p>
                                     )}
 
                                     {/* ✨ Điểm mạnh */}
-                                    <div className="p-3 rounded-lg bg-emerald-50/80 border border-emerald-200">
-                                      <h5 className="text-xs font-extrabold text-emerald-900 flex items-center gap-1.5 mb-1.5">
+                                    <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+                                      <h5 className="text-xs font-extrabold text-emerald-300 flex items-center gap-1.5 mb-1.5">
                                         <span>✨ Điểm mạnh</span>
                                       </h5>
-                                      <ul className="space-y-1 text-xs text-slate-800 leading-relaxed">
+                                      <ul className="space-y-1 text-xs text-slate-200 leading-relaxed">
                                         {rev.strengths.map((s, i) => (
                                           <li
                                             key={i}
                                             className="flex items-start gap-2"
                                           >
-                                            <span className="text-emerald-600 font-bold shrink-0">
+                                            <span className="text-emerald-400 font-bold shrink-0">
                                               -
                                             </span>
                                             <span>{s}</span>
@@ -2333,17 +2334,17 @@ export function MatchAnalyzerApp() {
                                     </div>
 
                                     {/* 💡 Điểm cần cải thiện */}
-                                    <div className="p-3 rounded-lg bg-amber-50/80 border border-amber-200">
-                                      <h5 className="text-xs font-extrabold text-amber-900 flex items-center gap-1.5 mb-1.5">
+                                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                                      <h5 className="text-xs font-extrabold text-amber-300 flex items-center gap-1.5 mb-1.5">
                                         <span>💡 Điểm cần cải thiện</span>
                                       </h5>
-                                      <ul className="space-y-1 text-xs text-slate-800 leading-relaxed">
+                                      <ul className="space-y-1 text-xs text-slate-200 leading-relaxed">
                                         {rev.weaknesses.map((w, i) => (
                                           <li
                                             key={i}
                                             className="flex items-start gap-2"
                                           >
-                                            <span className="text-amber-600 font-bold shrink-0">
+                                            <span className="text-amber-400 font-bold shrink-0">
                                               -
                                             </span>
                                             <span>{w}</span>
@@ -2353,17 +2354,17 @@ export function MatchAnalyzerApp() {
                                     </div>
 
                                     {/* 🎮 Lời khuyên cải thiện */}
-                                    <div className="p-3 rounded-lg bg-sky-50/80 border border-sky-200">
-                                      <h5 className="text-xs font-extrabold text-sky-900 flex items-center gap-1.5 mb-1.5">
+                                    <div className="p-3 rounded-lg bg-sky-500/10 border border-sky-500/30">
+                                      <h5 className="text-xs font-extrabold text-sky-300 flex items-center gap-1.5 mb-1.5">
                                         <span>🎮 Lời khuyên cải thiện</span>
                                       </h5>
-                                      <ul className="space-y-1 text-xs text-slate-800 leading-relaxed">
+                                      <ul className="space-y-1 text-xs text-slate-200 leading-relaxed">
                                         {rev.actionableAdvice.map((adv, i) => (
                                           <li
                                             key={i}
                                             className="flex items-start gap-2"
                                           >
-                                            <span className="text-sky-600 font-bold shrink-0">
+                                            <span className="text-sky-400 font-bold shrink-0">
                                               -
                                             </span>
                                             <span>{adv}</span>
@@ -2463,13 +2464,13 @@ export function MatchAnalyzerApp() {
                                     <div
                                       key={lm.role}
                                       id={laneContainerId}
-                                      className="p-3.5 sm:p-5 rounded-2xl bg-slate-50/90 border-2 border-slate-200 space-y-4 shadow-xs"
+                                      className="p-3.5 sm:p-5 rounded-2xl bg-[#0b0e18] border-2 border-[#1f2844] space-y-4 shadow-xs"
                                     >
                                       {/* Head-to-Head Lane Comparison Banner */}
-                                      <div className="p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200 space-y-3 shadow-2xs">
-                                        <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+                                      <div className="p-3.5 sm:p-4 rounded-xl bg-[#13192b] border border-[#232d4b] space-y-3 shadow-2xs">
+                                        <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-[#1f2844]">
                                           <div className="flex flex-wrap items-center gap-2">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-600 text-white text-xs font-black uppercase tracking-wider">
+                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 text-xs font-black uppercase tracking-wider">
                                               <RoleIcon
                                                 role={lm.role}
                                                 className="w-3.5 h-3.5"
@@ -2478,15 +2479,15 @@ export function MatchAnalyzerApp() {
                                             </span>
 
                                             {blueStat && redStat && (
-                                              <span className="text-xs sm:text-sm font-black text-slate-900">
-                                                <span className="text-sky-700">
+                                              <span className="text-xs sm:text-sm font-black text-white">
+                                                <span className="text-sky-400">
                                                   {blueStat.championName} (
                                                   {blueStat.riotIdGameName})
                                                 </span>{" "}
-                                                <span className="text-amber-600 mx-1">
+                                                <span className="text-amber-400 mx-1">
                                                   ⚡ VS ⚡
                                                 </span>{" "}
-                                                <span className="text-rose-700">
+                                                <span className="text-rose-400">
                                                   {redStat.championName} (
                                                   {redStat.riotIdGameName})
                                                 </span>
@@ -2499,11 +2500,11 @@ export function MatchAnalyzerApp() {
                                               <span
                                                 className={`px-2.5 py-1 rounded-lg text-[11px] font-black uppercase ${
                                                   laneComp.winnerTeam === 100
-                                                    ? "bg-sky-100 text-sky-800 border border-sky-300"
+                                                    ? "bg-sky-500/15 text-sky-300 border border-sky-500/40"
                                                     : laneComp.winnerTeam ===
                                                       200
-                                                    ? "bg-rose-100 text-rose-800 border border-rose-300"
-                                                    : "bg-slate-100 text-slate-700 border border-slate-300"
+                                                    ? "bg-rose-500/15 text-rose-300 border border-rose-500/40"
+                                                    : "bg-[#1e2742] text-slate-300 border border-[#2d3a62]"
                                                 }`}
                                               >
                                                 {laneComp.winnerTeam === 100
@@ -2532,16 +2533,16 @@ export function MatchAnalyzerApp() {
                                               disabled={
                                                 copyingTargetId !== null
                                               }
-                                              className="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-300 text-[11px] font-bold text-amber-900 inline-flex items-center gap-1 cursor-pointer transition-colors"
+                                              className="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-[11px] font-bold text-amber-300 inline-flex items-center gap-1 cursor-pointer transition-colors"
                                             >
                                               {copyingTargetId ===
                                               `LANE_${lm.role}` ? (
                                                 <RefreshCw className="w-3 h-3 animate-spin" />
                                               ) : copiedTargetId ===
                                                 `LANE_${lm.role}` ? (
-                                                <Check className="w-3 h-3 text-emerald-600" />
+                                                <Check className="w-3 h-3 text-emerald-400" />
                                               ) : (
-                                                <Camera className="w-3 h-3 text-amber-700" />
+                                                <Camera className="w-3 h-3 text-amber-400" />
                                               )}
                                               <span>
                                                 {copiedTargetId ===
@@ -2557,27 +2558,27 @@ export function MatchAnalyzerApp() {
                                         {blueStat && redStat && (
                                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-0.5">
                                             {/* Gold Bar */}
-                                            <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+                                            <div className="p-2.5 rounded-lg bg-[#0b0e18] border border-[#1f2844] space-y-1.5">
                                               <div className="flex items-center justify-between text-[11px] font-bold">
                                                 <span
                                                   className={
                                                     bGold >= rGold
-                                                      ? "text-sky-700 font-black"
-                                                      : "text-slate-600"
+                                                      ? "text-sky-400 font-black"
+                                                      : "text-slate-400"
                                                   }
                                                 >
                                                   💰{" "}
                                                   {bGold.toLocaleString()} vàng
                                                 </span>
-                                                <span className="text-[10px] uppercase tracking-wider text-slate-500 font-extrabold">
+                                                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-extrabold">
                                                   Chênh lệch vàng:{" "}
                                                   <strong
                                                     className={
                                                       bGold > rGold
-                                                        ? "text-sky-700"
+                                                        ? "text-sky-400"
                                                         : rGold > bGold
-                                                        ? "text-rose-700"
-                                                        : "text-slate-700"
+                                                        ? "text-rose-400"
+                                                        : "text-slate-300"
                                                     }
                                                   >
                                                     +{goldGap.toLocaleString()}
@@ -2586,8 +2587,8 @@ export function MatchAnalyzerApp() {
                                                 <span
                                                   className={
                                                     rGold >= bGold
-                                                      ? "text-rose-700 font-black"
-                                                      : "text-slate-600"
+                                                      ? "text-rose-400 font-black"
+                                                      : "text-slate-400"
                                                   }
                                                 >
                                                   {rGold.toLocaleString()} vàng
@@ -2596,7 +2597,7 @@ export function MatchAnalyzerApp() {
                                               </div>
                                               <div className="w-full h-2.5 rounded-full bg-rose-500 overflow-hidden flex">
                                                 <div
-                                                  className="h-full bg-sky-500 border-r-2 border-white"
+                                                  className="h-full bg-sky-500 border-r-2 border-[#0b0e18]"
                                                   style={{
                                                     width: `${bGoldPct}%`,
                                                   }}
@@ -2605,27 +2606,27 @@ export function MatchAnalyzerApp() {
                                             </div>
 
                                             {/* Damage Bar */}
-                                            <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+                                            <div className="p-2.5 rounded-lg bg-[#0b0e18] border border-[#1f2844] space-y-1.5">
                                               <div className="flex items-center justify-between text-[11px] font-bold">
                                                 <span
                                                   className={
                                                     bDmg >= rDmg
-                                                      ? "text-sky-700 font-black"
-                                                      : "text-slate-600"
+                                                      ? "text-sky-400 font-black"
+                                                      : "text-slate-400"
                                                   }
                                                 >
                                                   ⚔️ {bDmg.toLocaleString()} ST (
                                                   {blueStat.damageShare}%)
                                                 </span>
-                                                <span className="text-[10px] uppercase tracking-wider text-slate-500 font-extrabold">
+                                                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-extrabold">
                                                   Hơn sát thương:{" "}
                                                   <strong
                                                     className={
                                                       bDmg > rDmg
-                                                        ? "text-sky-700"
+                                                        ? "text-sky-400"
                                                         : rDmg > bDmg
-                                                        ? "text-rose-700"
-                                                        : "text-slate-700"
+                                                        ? "text-rose-400"
+                                                        : "text-slate-300"
                                                     }
                                                   >
                                                     +{dmgGap.toLocaleString()}
@@ -2634,8 +2635,8 @@ export function MatchAnalyzerApp() {
                                                 <span
                                                   className={
                                                     rDmg >= bDmg
-                                                      ? "text-rose-700 font-black"
-                                                      : "text-slate-600"
+                                                      ? "text-rose-400 font-black"
+                                                      : "text-slate-400"
                                                   }
                                                 >
                                                   {rDmg.toLocaleString()} ST (
@@ -2644,7 +2645,7 @@ export function MatchAnalyzerApp() {
                                               </div>
                                               <div className="w-full h-2.5 rounded-full bg-rose-500 overflow-hidden flex">
                                                 <div
-                                                  className="h-full bg-sky-500 border-r-2 border-white"
+                                                  className="h-full bg-sky-500 border-r-2 border-[#0b0e18]"
                                                   style={{
                                                     width: `${bDmgPct}%`,
                                                   }}
@@ -2657,26 +2658,26 @@ export function MatchAnalyzerApp() {
                                         {/* Quick 4-Metric Head-to-Head Strip + AI Verdict */}
                                         {blueStat && redStat && (
                                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-                                            <div className="px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+                                            <div className="px-2.5 py-1.5 rounded-lg bg-[#0b0e18] border border-[#1f2844] flex items-center justify-between">
                                               <span
                                                 className={
                                                   blueStat.kda >= redStat.kda
-                                                    ? "font-black text-sky-700"
-                                                    : "text-slate-600"
+                                                    ? "font-black text-sky-400"
+                                                    : "text-slate-400"
                                                 }
                                               >
                                                 {blueStat.kills}/
                                                 {blueStat.deaths}/
                                                 {blueStat.assists}
                                               </span>
-                                              <span className="text-[10px] font-bold text-slate-400 uppercase">
+                                              <span className="text-[10px] font-bold text-slate-500 uppercase">
                                                 KDA
                                               </span>
                                               <span
                                                 className={
                                                   redStat.kda >= blueStat.kda
-                                                    ? "font-black text-rose-700"
-                                                    : "text-slate-600"
+                                                    ? "font-black text-rose-400"
+                                                    : "text-slate-400"
                                                 }
                                               >
                                                 {redStat.kills}/{redStat.deaths}
@@ -2684,25 +2685,25 @@ export function MatchAnalyzerApp() {
                                               </span>
                                             </div>
 
-                                            <div className="px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+                                            <div className="px-2.5 py-1.5 rounded-lg bg-[#0b0e18] border border-[#1f2844] flex items-center justify-between">
                                               <span
                                                 className={
                                                   blueStat.cs >= redStat.cs
-                                                    ? "font-black text-sky-700"
-                                                    : "text-slate-600"
+                                                    ? "font-black text-sky-400"
+                                                    : "text-slate-400"
                                                 }
                                               >
                                                 {blueStat.cs} ({blueStat.csPerMin}
                                                 /p)
                                               </span>
-                                              <span className="text-[10px] font-bold text-slate-400 uppercase">
+                                              <span className="text-[10px] font-bold text-slate-500 uppercase">
                                                 Lính CS
                                               </span>
                                               <span
                                                 className={
                                                   redStat.cs >= blueStat.cs
-                                                    ? "font-black text-rose-700"
-                                                    : "text-slate-600"
+                                                    ? "font-black text-rose-400"
+                                                    : "text-slate-400"
                                                 }
                                               >
                                                 {redStat.cs} ({redStat.csPerMin}
@@ -2710,13 +2711,13 @@ export function MatchAnalyzerApp() {
                                               </span>
                                             </div>
 
-                                            <div className="px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+                                            <div className="px-2.5 py-1.5 rounded-lg bg-[#0b0e18] border border-[#1f2844] flex items-center justify-between">
                                               <span
                                                 className={
                                                   blueStat.visionScore >=
                                                   redStat.visionScore
-                                                    ? "font-black text-sky-700"
-                                                    : "text-slate-600"
+                                                    ? "font-black text-sky-400"
+                                                    : "text-slate-400"
                                                 }
                                               >
                                                 👁️ {blueStat.visionScore} (
@@ -2724,15 +2725,15 @@ export function MatchAnalyzerApp() {
                                                   0}{" "}
                                                 mắt tím)
                                               </span>
-                                              <span className="text-[10px] font-bold text-slate-400 uppercase">
+                                              <span className="text-[10px] font-bold text-slate-500 uppercase">
                                                 Tầm nhìn
                                               </span>
                                               <span
                                                 className={
                                                   redStat.visionScore >=
                                                   blueStat.visionScore
-                                                    ? "font-black text-rose-700"
-                                                    : "text-slate-600"
+                                                    ? "font-black text-rose-400"
+                                                    : "text-slate-400"
                                                 }
                                               >
                                                 ({redStat.visionWardsBoughtInGame ??
@@ -2742,27 +2743,27 @@ export function MatchAnalyzerApp() {
                                               </span>
                                             </div>
 
-                                            <div className="px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+                                            <div className="px-2.5 py-1.5 rounded-lg bg-[#0b0e18] border border-[#1f2844] flex items-center justify-between">
                                               <span
                                                 className={
                                                   blueStat.mvpScore >=
                                                   redStat.mvpScore
-                                                    ? "font-black text-sky-700"
-                                                    : "text-slate-600"
+                                                    ? "font-black text-sky-400"
+                                                    : "text-slate-400"
                                                 }
                                               >
                                                 OP {blueStat.mvpScore} (
                                                 {blueRev?.grade})
                                               </span>
-                                              <span className="text-[10px] font-bold text-slate-400 uppercase">
+                                              <span className="text-[10px] font-bold text-slate-500 uppercase">
                                                 Điểm AI
                                               </span>
                                               <span
                                                 className={
                                                   redStat.mvpScore >=
                                                   blueStat.mvpScore
-                                                    ? "font-black text-rose-700"
-                                                    : "text-slate-600"
+                                                    ? "font-black text-rose-400"
+                                                    : "text-slate-400"
                                                 }
                                               >
                                                 ({redRev?.grade}) OP{" "}
@@ -2773,8 +2774,8 @@ export function MatchAnalyzerApp() {
                                         )}
 
                                         {laneComp?.verdict && (
-                                          <p className="text-xs text-slate-700 bg-teal-50/60 px-3 py-2 rounded-lg border border-teal-200/80">
-                                            <strong className="text-teal-900">
+                                          <p className="text-xs text-slate-200 bg-amber-500/10 px-3 py-2 rounded-lg border border-amber-500/30">
+                                            <strong className="text-amber-400">
                                               Nhận xét kèo đấu {lm.role}:
                                             </strong>{" "}
                                             {laneComp.verdict}
@@ -2818,6 +2819,7 @@ export function MatchAnalyzerApp() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

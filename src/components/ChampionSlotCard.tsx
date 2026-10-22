@@ -65,33 +65,36 @@ export function ChampionSlotCard({
 
   return (
     <article
-      className={`champ-card relative flex flex-col rounded-xl overflow-hidden border bg-white select-none ${
+      className={`champ-card relative flex flex-col rounded-2xl overflow-hidden border bg-[#101524] select-none ${
         isSelectedForReroll
-          ? "border-teal-500 ring-2 ring-teal-500/25 shadow-lg"
+          ? "border-cyan-400 ring-2 ring-cyan-500/30 shadow-lg"
           : isLocked
-          ? "border-amber-500 ring-2 ring-amber-500/25 shadow-md"
-          : "border-slate-200 hover:border-amber-400 shadow-sm hover:shadow-md"
+          ? "border-amber-400 ring-2 ring-amber-500/30 shadow-md"
+          : "border-[#1f2844] hover:border-amber-400/70 shadow-lg"
       }`}
     >
       {/* Top Lane Role Bar */}
-      <div className="relative z-10 flex items-center justify-between px-3 py-2.5 border-b border-slate-200 bg-slate-50/90">
+      <div className="relative z-10 flex items-center justify-between px-3 py-2.5 border-b border-[#1f2844] bg-[#0b0e18]">
         <div className="flex items-center gap-2 min-w-0">
           <div
-            className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-white shadow-2xs shrink-0"
+            className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#263254] bg-[#141b2e] shrink-0"
             style={{ color: role.accentColor }}
           >
             <RoleIcon role={role.id} className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <span className="text-xs font-extrabold tracking-widest uppercase text-slate-800">
+              <span
+                className="text-xs font-extrabold tracking-widest uppercase"
+                style={{ color: role.accentColor }}
+              >
                 {role.shortName}
               </span>
-              <span className="text-[11px] text-slate-500 truncate">
+              <span className="text-[11px] text-slate-400 truncate">
                 • {poolCount} tướng
               </span>
             </div>
-            <h2 className="text-xs sm:text-sm font-bold text-slate-900 leading-tight truncate">
+            <h2 className="text-xs sm:text-sm font-bold text-white leading-tight truncate">
               {role.name}
             </h2>
           </div>
@@ -104,13 +107,13 @@ export function ChampionSlotCard({
             onClick={onToggleSelect}
             title={
               isSelectedForReroll
-                ? "Bỏ chọn đường này khỏi danh sách roll lại"
-                : "Chọn đường này để roll lại theo nhóm"
+                ? "Bỏ chọn đường này khỏi danh sách mở lại"
+                : "Chọn đường này để mở lại theo nhóm"
             }
             className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold transition-colors border cursor-pointer ${
               isSelectedForReroll
-                ? "bg-teal-600 text-white border-teal-600"
-                : "bg-white text-slate-600 border-slate-200 hover:border-teal-400 hover:text-teal-700"
+                ? "bg-cyan-400 text-slate-950 border-cyan-300"
+                : "bg-[#161e33] text-slate-300 border-[#263254] hover:border-cyan-400 hover:text-white"
             }`}
           >
             {isSelectedForReroll ? (
@@ -126,13 +129,13 @@ export function ChampionSlotCard({
             onClick={onToggleLock}
             title={
               isLocked
-                ? "Mở khóa đường này (cho phép đổi tướng khi Roll Tất Cả)"
-                : "Khóa đường này (giữ nguyên tướng khi Roll Tất Cả)"
+                ? "Mở khóa đường này"
+                : "Khóa đường này (giữ nguyên tướng khi Mở Tất Cả)"
             }
             className={`p-1.5 rounded-md transition-colors border cursor-pointer ${
               isLocked
-                ? "bg-amber-500 text-white border-amber-500"
-                : "bg-white text-slate-600 border-slate-200 hover:border-amber-400 hover:text-amber-700"
+                ? "bg-amber-400 text-slate-950 border-amber-300"
+                : "bg-[#161e33] text-slate-300 border-[#263254] hover:border-amber-400 hover:text-white"
             }`}
           >
             {isLocked ? (
@@ -282,19 +285,15 @@ export function ChampionSlotCard({
       </div>
 
       {/* Individual Lane Reroll Button Footer */}
-      <div className="p-2.5 sm:p-3 bg-slate-50 border-t border-slate-200">
+      <div className="p-2.5 sm:p-3 bg-[#0b0e18] border-t border-[#1f2844]">
         <button
           type="button"
           onClick={onRerollLane}
           disabled={isRolling}
-          className="hextech-action-btn w-full flex items-center justify-center gap-2 py-2 sm:py-2.5 px-3 rounded-lg font-bold text-xs sm:text-sm uppercase tracking-wider text-slate-800 bg-white hover:bg-teal-50 hover:text-teal-700 border border-slate-300 hover:border-teal-500 shadow-2xs disabled:opacity-50 cursor-pointer"
+          className="hextech-action-btn w-full flex items-center justify-center gap-2 py-2 sm:py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider text-slate-950 bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 shadow-[0_0_15px_rgba(245,158,11,0.3)] disabled:opacity-50 cursor-pointer"
         >
-          <Dices
-            className={`w-4 h-4 text-teal-600 ${
-              isRolling ? "animate-spin" : ""
-            }`}
-          />
-          <span>Roll lại {role.shortName}</span>
+          <Dices className={`w-4 h-4 ${isRolling ? "animate-spin" : ""}`} />
+          <span>Mở lại {role.shortName}</span>
         </button>
       </div>
     </article>

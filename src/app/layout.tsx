@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  colorScheme: "light dark",
-  themeColor: "#f8fafc",
+  colorScheme: "dark",
+  themeColor: "#080b13",
 };
 
 export default function RootLayout({
@@ -21,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className="light">
-      <body className="antialiased selection:bg-teal-600 selection:text-white">
+    <html lang="vi" className="dark">
+      <body className="antialiased selection:bg-amber-500 selection:text-slate-950">
         <Navbar />
         {children}
       </body>

@@ -92,7 +92,7 @@ export async function renderElementToPngBlob(
   }
 ): Promise<Blob> {
   const padding = options?.paddingPx ?? 20;
-  const bgColor = options?.backgroundColor ?? "#f8fafc";
+  const bgColor = options?.backgroundColor ?? "#080b13";
 
   const rect = element.getBoundingClientRect();
   const contentWidth = Math.max(Math.ceil(rect.width), element.scrollWidth, 360);
@@ -131,7 +131,7 @@ export async function renderElementToPngBlob(
   wrapperDiv.style.padding = `${padding}px`;
   wrapperDiv.style.backgroundColor = bgColor;
   wrapperDiv.style.fontFamily = fontFamily;
-  wrapperDiv.style.color = "#0f172a";
+  wrapperDiv.style.color = "#f1f5f9";
   wrapperDiv.style.boxSizing = "border-box";
 
   wrapperDiv.appendChild(clone);
@@ -144,9 +144,9 @@ export async function renderElementToPngBlob(
     footer.style.justifyContent = "space-between";
     footer.style.fontSize = "11px";
     footer.style.fontWeight = "700";
-    footer.style.color = "#0f766e";
+    footer.style.color = "#38bdf8";
     footer.style.paddingTop = "6px";
-    footer.style.borderTop = "1px solid #cbd5e1";
+    footer.style.borderTop = "1px solid #1f2844";
     footer.textContent = options.watermarkText;
     wrapperDiv.appendChild(footer);
   }

@@ -318,7 +318,7 @@ export function SkinClubLaneRow({
                   className="text-xs font-black uppercase tracking-widest"
                   style={{ color: role.accentColor }}
                 >
-                  HÒM {role.shortName}
+                  ĐƯỜNG {role.shortName}
                 </span>
                 <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#1a2236] text-slate-300 border border-[#283350]">
                   {candidatePool.length} tướng
@@ -333,7 +333,7 @@ export function SkinClubLaneRow({
                 {role.name}
               </h2>
               <p className="hidden lg:block text-[11px] text-slate-400 truncate mt-0.5">
-                {role.englishName} • Case Drop
+                {role.englishName}
               </p>
             </div>
           </div>
@@ -350,7 +350,7 @@ export function SkinClubLaneRow({
                 className={`w-3.5 h-3.5 ${isRolling ? "animate-spin" : ""}`}
               />
               <span>
-                {isRolling ? "Đang quay..." : `Mở ${role.shortName}`}
+                {isRolling ? "Đang mở..." : `Mở ${role.shortName}`}
               </span>
             </button>
 
@@ -548,7 +548,7 @@ export function SkinClubLaneRow({
                 <div className="min-w-0 flex-1">
                   <div className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded bg-amber-400/20 border border-amber-400/50 text-[10px] font-black uppercase tracking-wider text-amber-300 mb-0.5">
                     <Sparkles className="w-2.5 h-2.5" />
-                    <span>UNBOXED DROP</span>
+                    <span>TƯỚNG ĐÃ MỞ</span>
                   </div>
                   <h3 className="text-base sm:text-lg font-black text-white truncate leading-tight">
                     {champion.name}
@@ -576,10 +576,10 @@ export function SkinClubLaneRow({
               </div>
               <div className="min-w-0">
                 <div className="text-xs font-black uppercase tracking-wider text-amber-400">
-                  Đang mở hòm {role.shortName}...
+                  Đang mở tướng {role.shortName}...
                 </div>
                 <div className="text-[11px] text-slate-400">
-                  Đang quay vật phẩm...
+                  Kim chỉ laser đang chọn tướng...
                 </div>
               </div>
             </div>

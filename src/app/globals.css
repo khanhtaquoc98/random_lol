@@ -70,17 +70,18 @@
   );
 }
 
+html.dark,
 html.light {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body {
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #080b13;
+  color: #f1f5f9;
   background-image:
-    radial-gradient(circle at 50% 0%, rgba(13, 148, 136, 0.08) 0%, transparent 55%),
-    radial-gradient(circle at 85% 15%, rgba(217, 119, 6, 0.08) 0%, transparent 45%),
-    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 55%, #f8fafc 100%);
+    radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 85% 15%, rgba(136, 71, 255, 0.08) 0%, transparent 45%),
+    linear-gradient(180deg, #080b13 0%, #0b0f1b 55%, #080b13 100%);
   min-block-size: 100dvh;
   overflow-x: clip;
 }
